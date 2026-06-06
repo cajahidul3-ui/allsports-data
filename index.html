@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b0d11">
+<title>All Sports</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0b0d11;color:#e8eaf0}
+.app{max-width:430px;margin:0 auto;height:100vh;position:relative;overflow:hidden;background:#0b0d11}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .2s;overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+.screen.hidden{transform:translateX(100%);opacity:0;pointer-events:none}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;background:#0b0d11;border-bottom:.5px solid #1e2230;position:sticky;top:0;z-index:10}
+.logo{font-size:19px;font-weight:800;color:#fff}
+.logo span{color:#00b4d8}
+.logo small{font-size:9px;font-weight:500;color:#5a6070;display:block;letter-spacing:1px;margin-top:-2px}
+.topbar-icons{display:flex;gap:16px}
+.topbar-icons i{font-size:20px;color:#9aa0b0;cursor:pointer;transition:color .15s}
+.topbar-icons i.active,.topbar-icons i:hover{color:#00b4d8}
+.search-wrap{margin:8px 12px;background:#141720;border:.5px solid #2a2e3e;border-radius:10px;display:flex;align-items:center;gap:8px;padding:8px 12px;display:none}
+.search-wrap i{color:#5a6070;font-size:16px}
+.search-wrap input{background:none;border:none;outline:none;color:#e8eaf0;font-size:14px;flex:1}
+.search-wrap input::placeholder{color:#5a6070}
+.filter-row{display:flex;gap:8px;padding:8px 12px;overflow-x:auto;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:.5px solid #2a2e3e;color:#9aa0b0;background:#141720;transition:all .15s;flex-shrink:0}
+.pill.active{background:#00b4d8;color:#fff;border-color:#00b4d8}
+.match-card{margin:4px 12px;background:#141720;border-radius:12px;border:.5px solid #1e2230;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.match-card:active{background:#1a1f2e}
+.teams{flex:1;min-width:0}
+.team-row{display:flex;align-items:center;gap:8px;margin:3px 0}
+.flag{font-size:17px;flex-shrink:0}
+.tname{font-size:14px;font-weight:500;color:#e0e2ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fav{font-size:15px;margin-left:auto;cursor:pointer;color:#3a3e4e;transition:color .15s;flex-shrink:0;padding:2px}
+.fav.on{color:#f5a623}
+.meta{text-align:right;flex-shrink:0;min-width:86px}
+.mtime{font-size:12px;color:#9aa0b0}
+.mstarts{font-size:11px;color:#7a8090;margin-top:2px}
+.msrvs{font-size:11px;color:#5a6070;margin-top:2px}
+.stags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;justify-content:flex-end}
+.stag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#1e2535;color:#9aa0b0;border:.5px solid #2a3045}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ldot{width:6px;height:6px;background:#e8393a;border-radius:50%;animation:pulse 1.2s infinite;display:inline-block;margin-right:4px}
+.sec-label{display:flex;align-items:center;gap:6px;padding:12px 12px 4px;font-size:11px;color:#9aa0b0;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.empty{text-align:center;padding:50px 24px;color:#5a6070}
+.empty i{font-size:40px;display:block;margin-bottom:12px}
+.scroll-body{padding-bottom:80px}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px}
+.spin{width:36px;height:36px;border:3px solid #1e2230;border-top-color:#00b4d8;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:#5a6070}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#0b0d11;border-top:.5px solid #1e2230;display:flex;justify-content:space-around;padding:10px 0 12px;z-index:20}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:#5a6070;font-size:10px;transition:color .15s;padding:0 12px}
+.ni.active{color:#00b4d8}
+.ni i{font-size:22px}
+.shdr{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:.5px solid #1e2230;position:sticky;top:0;background:#0b0d11;z-index:5}
+.back{color:#9aa0b0;font-size:22px;cursor:pointer;padding:2px}
+.stitle{font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ssub{font-size:11px;color:#9aa0b0;margin-top:1px}
+.live-ind{display:flex;align-items:center;gap:5px;font-size:11px;color:#e8393a;font-weight:700;flex-shrink:0}
+.player-wrap{margin:12px;border-radius:14px;overflow:hidden;background:#000;position:relative;cursor:pointer}
+.video-el{width:100%;height:200px;display:block;object-fit:cover;background:#000}
+.p-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);transition:opacity .3s;flex-direction:column;gap:10px}
+.p-overlay.hide{opacity:0;pointer-events:none}
+.buf{width:38px;height:38px;border:3px solid #fff2;border-top-color:#00b4d8;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.playbtn{width:54px;height:54px;background:#00b4d8;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;flex-shrink:0}
+.playbtn i{font-size:22px;color:#fff}
+.pbar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:18px 12px 10px;display:flex;align-items:center;gap:8px}
+.prog-wrap{flex:1;height:3px;background:#fff3;border-radius:2px;cursor:pointer}
+.prog-fill{height:100%;background:#00b4d8;border-radius:2px;width:0%;transition:width .5s linear}
+.pbtn{background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:2px}
+.ttxt{font-size:11px;color:#ffffffaa;min-width:40px;text-align:right}
+.qbadge{font-size:10px;font-weight:700;background:#00b4d8;color:#fff;padding:2px 6px;border-radius:4px}
+.np-bar{margin:0 12px 8px;background:#091418;border:.5px solid #00b4d8;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.npdot{width:8px;height:8px;background:#00b4d8;border-radius:50%;animation:pulse 1s infinite;flex-shrink:0}
+.np-info{flex:1;min-width:0}
+.npname{font-size:13px;font-weight:600;color:#00b4d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.npq{font-size:11px;color:#4a7080;margin-top:1px}
+.npping{font-size:11px;color:#00b4d8;font-weight:700;flex-shrink:0}
+.qrow{display:flex;gap:6px;margin:8px 12px}
+.qbtn{flex:1;padding:7px 0;border-radius:8px;background:#141720;border:.5px solid #1e2230;color:#9aa0b0;font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.qbtn.active{background:#091418;border-color:#00b4d8;color:#00b4d8}
+.chtabs{display:flex;background:#141720;border-radius:10px;padding:3px;margin:8px 12px 0;border:.5px solid #1e2230}
+.chtab{flex:1;padding:7px 0;text-align:center;font-size:12px;font-weight:600;color:#9aa0b0;cursor:pointer;border-radius:7px;transition:all .15s}
+.chtab.active{background:#00b4d8;color:#fff}
+.chsec{font-size:11px;color:#9aa0b0;padding:12px 12px 4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.chlist{padding:0 12px}
+.chcard{display:flex;align-items:center;gap:12px;background:#141720;border-radius:10px;border:.5px solid #1e2230;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .15s;position:relative}
+.chcard:active{background:#1a1f2e}
+.chcard.active-ch{border-color:#00b4d8;background:#091418}
+.chlogo{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.chname{font-size:13px;font-weight:600;color:#e0e2ea}
+.chcountry{font-size:11px;color:#5a6070;margin-top:1px}
+.chq{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:3px}
+.chping{font-size:10px;color:#5a6070;margin-top:2px;text-align:right}
+.playing-tag{position:absolute;top:6px;right:8px;font-size:9px;font-weight:700;color:#00b4d8;background:#091418;padding:2px 6px;border-radius:4px;border:.5px solid #00b4d8}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- MAIN SCREEN -->
+  <div class="screen" id="mainScreen">
+    <div class="topbar">
+      <div class="logo">All Sports<span>.</span><small>LIVE STREAMING</small></div>
+      <div class="topbar-icons">
+        <i class="ti ti-refresh" onclick="loadData()"></i>
+        <i class="ti ti-heart" id="favBtn" onclick="toggleFavView()"></i>
+        <i class="ti ti-search" id="searchBtn" onclick="toggleSearch()"></i>
+      </div>
+    </div>
+
+    <div class="search-wrap" id="searchWrap">
+      <i class="ti ti-search"></i>
+      <input type="text" id="searchIn" placeholder="Search matches, teams..." oninput="applySearch()">
+      <i class="ti ti-x" style="cursor:pointer;color:#5a6070" onclick="clearSearch()"></i>
+    </div>
+
+    <div class="filter-row">
+      <div class="pill active" onclick="setFilter('all',this)">All</div>
+      <div class="pill" onclick="setFilter('live',this)"><span class="ldot"></span>Live</div>
+      <div class="pill" onclick="setFilter('cricket',this)">Cricket</div>
+      <div class="pill" onclick="setFilter('football',this)">Football</div>
+      <div class="pill" onclick="setFilter('motogp',this)">MotoGP</div>
+      <div class="pill" onclick="setFilter('f1',this)">F1</div>
+      <div class="pill" onclick="setFilter('wrestling',this)">WWE</div>
+    </div>
+
+    <div class="scroll-body" id="matchList"></div>
+
+    <div class="bnav">
+      <div class="ni active" onclick="switchNav('home',this)"><i class="ti ti-home"></i><span>Home</span></div>
+      <div class="ni" onclick="switchNav('live',this)"><i class="ti ti-player-play"></i><span>Live</span></div>
+      <div class="ni" onclick="switchNav('fav',this)"><i class="ti ti-heart"></i><span>Favorites</span></div>
+      <div class="ni" onclick="switchNav('settings',this)"><i class="ti ti-settings"></i><span>Settings</span></div>
+    </div>
+  </div>
+
+  <!-- STREAM SCREEN -->
+  <div class="screen hidden" id="streamScreen">
+    <div style="padding-bottom:30px">
+      <div class="shdr">
+        <i class="ti ti-arrow-left back" onclick="goBack()"></i>
+        <div style="flex:1;min-width:0">
+          <div class="stitle" id="stitle">Match</div>
+          <div class="ssub" id="ssub"></div>
+        </div>
+        <span class="live-ind"><span class="ldot"></span>LIVE</span>
+      </div>
+
+      <div class="player-wrap" onclick="toggleOvl()">
+        <video class="video-el" id="vid" autoplay muted playsinline loop
+          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+        </video>
+        <div class="p-overlay" id="povl">
+          <div class="buf" id="buf"></div>
+          <button class="playbtn" id="pbig" onclick="event.stopPropagation();playPause()">
+            <i class="ti ti-player-play" id="picon"></i>
+          </button>
+        </div>
+        <div class="pbar">
+          <button class="pbtn" onclick="event.stopPropagation();playPause()">
+            <i class="ti ti-player-pause" id="bicon"></i>
+          </button>
+          <div class="prog-wrap" onclick="event.stopPropagation();seek(event)">
+            <div class="prog-fill" id="pfill"></div>
+          </div>
+          <button class="pbtn" onclick="event.stopPropagation();toggleMute()">
+            <i class="ti ti-volume-off" id="vicon"></i>
+          </button>
+          <span class="ttxt">LIVE</span>
+          <span class="qbadge" id="qbadge">HD</span>
+        </div>
+      </div>
+
+      <div class="np-bar">
+        <div class="npdot"></div>
+        <div class="np-info">
+          <div class="npname" id="npname">Choose a channel below</div>
+          <div class="npq" id="npq">Tap any channel to start streaming</div>
+        </div>
+        <div class="npping" id="npping">--ms</div>
+      </div>
+
+      <div class="qrow">
+        <div class="qbtn" onclick="setQ('Auto',this)">Auto</div>
+        <div class="qbtn active" onclick="setQ('4K',this)">4K</div>
+        <div class="qbtn" onclick="setQ('HD',this)">HD</div>
+        <div class="qbtn" onclick="setQ('SD',this)">SD</div>
+        <div class="qbtn" onclick="setQ('Low',this)">Low</div>
+      </div>
+
+      <div class="chtabs">
+        <div class="chtab active" onclick="setChTab('all',this)">All</div>
+        <div class="chtab" onclick="setChTab('asia',this)">Asia</div>
+        <div class="chtab" onclick="setChTab('europe',this)">Europe</div>
+        <div class="chtab" onclick="setChTab('americas',this)">Americas</div>
+      </div>
+
+      <div id="chlist"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+var DATA_URL = './data.json';
+var matches = [];
+var channels = [];
+var favorites = [];
+var curFilter = 'all';
+var searchQ = '';
+var showFavs = false;
+var activeCh = null;
+var chTab = 'all';
+var muted = true;
+var ptimer = null;
+var otimer = null;
+
+function loadData() {
+  document.getElementById('matchList').innerHTML = '<div class="loading"><div class="spin"></div><div class="load-txt">Loading...</div></div>';
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', DATA_URL + '?v=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        matches = d.matches || [];
+        channels = d.channels || [];
+        renderMatches();
+      } catch(e) {
+        showError('JSON parse error: ' + e.message);
+      }
+    } else {
+      showError('HTTP Error: ' + xhr.status);
+    }
+  };
+  xhr.onerror = function() {
+    showError('Network error');
+  };
+  xhr.send();
+}
+
+function showError(msg) {
+  document.getElementById('matchList').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>' + msg + '</p></div>';
+}
+
+function renderMatches() {
+  var list = document.getElementById('matchList');
+  var items = matches.filter(function(m) {
+    if (showFavs) return favorites.indexOf(m.id) !== -1;
+    if (curFilter === 'live') return m.cat === 'live';
+    if (curFilter !== 'all') return m.cat === curFilter;
+    return true;
+  });
+  if (searchQ) {
+    var q = searchQ.toLowerCase();
+    items = items.filter(function(m) {
+      return m.t1.toLowerCase().indexOf(q) !== -1 || m.t2.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  if (!items.length) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-search"></i><p>' + (showFavs ? 'No favorites yet.' : 'No matches found.') + '</p></div>';
+    return;
+  }
+  var catNames = {live:'🔴 Live Now', cricket:'🏏 Cricket', football:'⚽ Football', motogp:'🏍️ MotoGP', f1:'🏎️ Formula 1', wrestling:'💪 WWE / Boxing'};
+  var groups = {};
+  items.forEach(function(m) {
+    if (!groups[m.cat]) groups[m.cat] = [];
+    groups[m.cat].push(m);
+  });
+  var html = '';
+  Object.keys(groups).forEach(function(cat) {
+    html += '<div class="sec-label">' + (catNames[cat] || cat) + '</div>';
+    groups[cat].forEach(function(m) {
+      var isLive = m.cat === 'live';
+      var faved = favorites.indexOf(m.id) !== -1 ? 'on' : '';
+      var srvs = m.servers || [];
+      var tags = srvs.slice(0, 3).map(function(s) { return '<span class="stag">' + s.type + '</span>'; }).join('');
+      var more = srvs.length > 3 ? '<span class="stag">+' + (srvs.length - 3) + '</span>' : '';
+      var timeHtml = isLive ? '<span style="color:#e8393a;font-weight:700">● LIVE</span>' : m.time;
+      var startsHtml = !isLive ? '<div class="mstarts">in ' + m.starts + '</div>' : '';
+      var flag2Html = m.flag2 ? '<div class="team-row"><span class="flag">' + m.flag2 + '</span><span class="tname">' + m.t2 + '</span></div>' : '<div class="team-row"><span style="font-size:11px;color:#5a6070">' + m.t2 + '</span></div>';
+      html += '<div class="match-card" onclick="openStream(' + m.id + ')">';
+      html += '<div class="teams">';
+      html += '<div class="team-row"><span class="flag">' + m.flag1 + '</span><span class="tname">' + m.t1 + '</span><span class="fav ' + faved + '" onclick="toggleFav(event,' + m.id + ')">★</span></div>';
+      html += flag2Html;
+      html += '</div>';
+      html += '<div class="meta">';
+      html += '<div class="mtime">' + timeHtml + '</div>';
+      html += startsHtml;
+      html += '<div class="msrvs">' + srvs.length + ' Servers</div>';
+      html += '<div class="stags">' + tags + more + '</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+  });
+  list.innerHTML = html;
+}
+
+function openStream(id) {
+  var m = null;
+  for (var i = 0; i < matches.length; i++) {
+    if (matches[i].id === id) { m = matches[i]; break; }
+  }
+  if (!m) return;
+  activeCh = null;
+  chTab = 'all';
+  document.getElementById('stitle').textContent = m.t1 + (m.flag2 ? ' vs ' + m.t2 : '');
+  document.getElementById('ssub').textContent = m.desc;
+  document.getElementById('npname').textContent = 'Choose a channel below';
+  document.getElementById('npq').textContent = 'Tap any channel to start streaming';
+  document.getElementById('npping').textContent = '--ms';
+  var tabs = document.querySelectorAll('.chtab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle('active', i === 0);
+  renderChannels();
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('streamScreen').classList.remove('hidden');
+  document.getElementById('streamScreen').scrollTop = 0;
+  autoPlay();
+}
+
+function renderChannels() {
+  var chs = chTab === 'all' ? channels : channels.filter(function(c) { return c.region === chTab; });
+  var grouped = {};
+  chs.forEach(function(c) {
+    if (!grouped[c.country]) grouped[c.country] = [];
+    grouped[c.country].push(c);
+  });
+  var html = '';
+  Object.keys(grouped).forEach(function(country) {
+    html += '<div class="chsec">' + country + '</div><div class="chlist">';
+    grouped[country].forEach(function(c) {
+      var isAct = activeCh === c.id;
+      var qc = c.quality === '4K' ? '#ef9f27' : c.quality === 'HD' ? '#00b4d8' : '#9aa0b0';
+      var qb = c.quality === '4K' ? '#2e1a0a' : c.quality === 'HD' ? '#091418' : '#1a1e2e';
+      var playTag = isAct ? '<span class="playing-tag">▶ Playing</span>' : '';
+      html += '<div class="chcard' + (isAct ? ' active-ch' : '') + '" onclick="selectCh(\'' + c.id + '\')">';
+      html += playTag;
+      html += '<div class="chlogo" style="background:' + c.color + ';color:' + c.text + '">' + c.short + '</div>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div class="chname">' + c.name + '</div>';
+      html += '<div class="chcountry">' + c.country + '</div>';
+      html += '<span class="chq" style="background:' + qb + ';color:' + qc + '">' + c.quality + '</span>';
+      html += '</div>';
+      html += '<div style="text-align:right;flex-shrink:0"><div class="chping">' + c.ping + 'ms</div></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  if (!html) html = '<div class="empty"><i class="ti ti-broadcast"></i><p>No channels</p></div>';
+  document.getElementById('chlist').innerHTML = html;
+}
+
+function selectCh(id) {
+  var c = null;
+  for (var i = 0; i < channels.length; i++) {
+    if (channels[i].id === id) { c = channels[i]; break; }
+  }
+  if (!c) return;
+  activeCh = id;
+  var v = document.getElementById('vid');
+  if (c.stream_url && c.stream_url.length > 5) {
+    v.src = c.stream_url;
+    v.play();
+  } else {
+    showBuf();
+    setTimeout(hideBuf, 1500);
+  }
+  document.getElementById('npname').textContent = c.name + ' · ' + c.quality;
+  document.getElementById('npq').textContent = c.country + ' · ' + c.quality + ' Stream';
+  document.getElementById('npping').textContent = c.ping + 'ms';
+  document.getElementById('qbadge').textContent = c.quality;
+  renderChannels();
+  document.getElementById('streamScreen').scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function setChTab(t, el) {
+  chTab = t;
+  var tabs = document.querySelectorAll('.chtab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  el.classList.add('active');
+  renderChannels();
+}
+
+function autoPlay() {
+  var v = document.getElementById('vid');
+  v.muted = true;
+  muted = true;
+  document.getElementById('vicon').className = 'ti ti-volume-off';
+  showBuf();
+  var p = v.play();
+  if (p !== undefined) {
+    p.then(function() {
+      hideBuf();
+      document.getElementById('povl').classList.add('hide');
+      document.getElementById('picon').className = 'ti ti-player-pause';
+      document.getElementById('bicon').className = 'ti ti-player-pause';
+      startProg();
+    }).catch(function() {
+      hideBuf();
+    });
+  }
+}
+
+function showBuf() {
+  document.getElementById('buf').style.display = 'block';
+  document.getElementById('pbig').style.display = 'none';
+  document.getElementById('povl').classList.remove('hide');
+}
+
+function hideBuf() {
+  document.getElementById('buf').style.display = 'none';
+  document.getElementById('pbig').style.display = 'flex';
+}
+
+function playPause() {
+  var v = document.getElementById('vid');
+  if (v.paused) {
+    v.play();
+    document.getElementById('picon').className = 'ti ti-player-pause';
+    document.getElementById('bicon').className = 'ti ti-player-pause';
+    document.getElementById('povl').classList.add('hide');
+    startProg();
+  } else {
+    v.pause();
+    document.getElementById('picon').className = 'ti ti-player-play';
+    document.getElementById('bicon').className = 'ti ti-player-play';
+    document.getElementById('povl').classList.remove('hide');
+  }
+}
+
+function toggleOvl() {
+  var v = document.getElementById('vid');
+  if (!v.paused) {
+    document.getElementById('povl').classList.remove('hide');
+    clearTimeout(otimer);
+    otimer = setTimeout(function() {
+      document.getElementById('povl').classList.add('hide');
+    }, 2500);
+  }
+}
+
+function toggleMute() {
+  var v = document.getElementById('vid');
+  muted = !muted;
+  v.muted = muted;
+  document.getElementById('vicon').className = muted ? 'ti ti-volume-off' : 'ti ti-volume';
+}
+
+function seek(e) {
+  var v = document.getElementById('vid');
+  if (!v.duration) return;
+  var r = e.currentTarget.getBoundingClientRect();
+  v.currentTime = (e.clientX - r.left) / r.width * v.duration;
+}
+
+function startProg() {
+  if (ptimer) clearInterval(ptimer);
+  ptimer = setInterval(function() {
+    var v = document.getElementById('vid');
+    if (v.duration) {
+      document.getElementById('pfill').style.width = (v.currentTime / v.duration * 100) + '%';
+    }
+  }, 500);
+}
+
+function setQ(q, el) {
+  var btns = document.querySelectorAll('.qbtn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  el.classList.add('active');
+  document.getElementById('qbadge').textContent = q === 'Auto' ? 'HD' : q;
+}
+
+function goBack() {
+  var v = document.getElementById('vid');
+  v.pause();
+  if (ptimer) clearInterval(ptimer);
+  document.getElementById('streamScreen').classList.add('hidden');
+  document.getElementById('mainScreen').classList.remove('hidden');
+}
+
+function setFilter(f, el) {
+  showFavs = false;
+  curFilter = f;
+  var pills = document.querySelectorAll('.pill');
+  for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+  el.classList.add('active');
+  renderMatches();
+}
+
+function toggleSearch() {
+  var w = document.getElementById('searchWrap');
+  var visible = w.style.display === 'flex';
+  w.style.display = visible ? 'none' : 'flex';
+  document.getElementById('searchBtn').classList.toggle('active', !visible);
+  if (!visible) {
+    document.getElementById('searchIn').focus();
+  } else {
+    searchQ = '';
+    renderMatches();
+  }
+}
+
+function applySearch() {
+  searchQ = document.getElementById('searchIn').value;
+  renderMatches();
+}
+
+function clearSearch() {
+  searchQ = '';
+  document.getElementById('searchIn').value = '';
+  renderMatches();
+}
+
+function toggleFav(e, id) {
+  e.stopPropagation();
+  var idx = favorites.indexOf(id);
+  if (idx !== -1) favorites.splice(idx, 1);
+  else favorites.push(id);
+  renderMatches();
+}
+
+function toggleFavView() {
+  showFavs = !showFavs;
+  document.getElementById('favBtn').classList.toggle('active', showFavs);
+  if (!showFavs) {
+    curFilter = 'all';
+    document.querySelectorAll('.pill')[0].classList.add('active');
+  } else {
+    var pills = document.querySelectorAll('.pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+  }
+  renderMatches();
+}
+
+function switchNav(t, el) {
+  var nis = document.querySelectorAll('.ni');
+  for (var i = 0; i < nis.length; i++) nis[i].classList.remove('active');
+  el.classList.add('active');
+  if (t === 'live') {
+    showFavs = false;
+    curFilter = 'live';
+    var pills = document.querySelectorAll('.pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.toggle('active', i === 1);
+    renderMatches();
+  } else if (t === 'fav') {
+    showFavs = true;
+    document.getElementById('favBtn').classList.add('active');
+    renderMatches();
+  } else if (t === 'home') {
+    showFavs = false;
+    curFilter = 'all';
+    var pills = document.querySelectorAll('.pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.toggle('active', i === 0);
+    renderMatches();
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
