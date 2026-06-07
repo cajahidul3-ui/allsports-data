@@ -3,587 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Sports</title>
+    <title>SportzX UI Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #090a10;
+            --bg-dark: #07080e;
+            --bg-gradient: linear-gradient(180deg, #0f0c1b 0%, #07080e 100%);
             --card-bg: #111424;
-            --accent-blue: #00e5ff;
-            --accent-pink: #ff007f;
-            --text-color: #ffffff;
-            --text-muted: #8fa0c0;
-            --border-gradient: linear-gradient(45deg, #00e5ff, #ff007f);
+            --neon-cyan: #00f0ff;
+            --neon-pink: #ff007f;
+            --text-main: #ffffff;
+            --text-muted: #7e8a9b;
+            --border-color: #1b203a;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            max-width: 480px;
-            margin: 0 auto;
-            min-height: 100vh;
+            background-color: #000;
+            color: var(--text-main);
             display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        /* Header Styles */
+        /* Mobile Frame Emulator */
+        .phone-container {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh;
+            min-height: 750px;
+            background: var(--bg-gradient);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #1a1d29;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        /* Top Status Bar Mock */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 20px;
+            font-size: 11px;
+            color: #fff;
+            background: #0f0c1b;
+        }
+
+        /* Header */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: linear-gradient(to bottom, #131722, var(--bg-color));
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 15px 18px;
+            background: #0f0c1b;
         }
 
         header .logo {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 500;
             letter-spacing: 0.5px;
         }
 
-        header .header-icons i {
+        header .icons i {
             font-size: 18px;
             margin-left: 20px;
             cursor: pointer;
-            color: var(--text-color);
-            transition: color 0.3s;
         }
 
-        header .header-icons i:hover {
-            color: var(--accent-blue);
-        }
-
-        /* Main Container */
-        main {
-            flex: 1;
-            padding: 10px 15px 90px 15px;
-            overflow-y: auto;
-        }
-
-        /* Horizontal Sports Icons */
-        .sports-carousel {
+        /* Ticker Banner */
+        .ticker-wrap {
+            background: rgba(0, 240, 255, 0.05);
+            padding: 8px 12px;
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            font-size: 12px;
+            color: var(--neon-cyan);
             display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 5px;
-            margin-bottom: 15px;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
-        .sports-carousel::-webkit-scrollbar {
+        .ticker-text {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Main Scrollable Content */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 15px 80px 15px;
+        }
+
+        .content-area::-webkit-scrollbar {
             display: none;
         }
 
-        .sport-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 65px;
-            cursor: pointer;
+        /* View Control */
+        .view-section {
+            display: none;
         }
 
-        .sport-icon-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: var(--card-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid #232946;
-            margin-bottom: 5px;
-            font-size: 20px;
-        }
-
-        .sport-item.active .sport-icon-wrapper {
-            border: 2px solid var(--accent-blue);
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-        }
-
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #232946;
-            font-size: 13px;
-            cursor: pointer;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .tab.active {
-            background: transparent;
-            border: 1px solid var(--accent-blue);
-            color: var(--text-color);
-        }
-
-        .tab .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #ff3366;
-            border-radius: 50%;
-            display: inline-block;
-            animation: blink 1.2s infinite;
-        }
-
-        /* Video Player Layout */
-        .video-container {
-            width: 100%;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-            position: relative;
-            margin-bottom: 20px;
-            border: 1px solid #232946;
-        }
-
-        .video-placeholder {
-            width: 100%;
-            aspect-ratio: 16/9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .player-controls-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        .player-top, .player-bottom-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .player-title {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .player-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .play-btn {
-            width: 45px;
-            height: 45px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            margin-bottom: 5px;
-        }
-
-        .timeline {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .progress {
-            width: 60%;
-            height: 100%;
-            background: var(--accent-pink);
-            border-radius: 2px;
-        }
-
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #ddd;
-            margin-top: 4px;
-        }
-
-        /* Live Stream Match Cards */
-        .match-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #1e2538;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
+        .view-section.active {
             display: block;
         }
 
-        .match-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--border-gradient);
-            opacity: 0.7;
+        /* Horizontal Sports List */
+        .sports-row {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 5px 0 15px 0;
         }
 
-        .card-header {
+        .sports-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sport-circle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .icon-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #151226;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #25233c;
+            margin-bottom: 6px;
+        }
+
+        .sport-circle.active .icon-box {
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+
+        /* Styled Filter Tabs */
+        .tabs-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-tab {
+            background: #111424;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-tab.active {
+            border: 1.5px solid var(--neon-cyan);
+            color: #fff;
+            font-family: 'Georgia', cursive, sans-serif;
+            font-style: italic;
+        }
+
+        .filter-tab .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Neon UI Match Card */
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.03);
+        }
+
+        .match-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 14px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(255, 0, 127, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .card-meta {
             display: flex;
             justify-content: space-between;
             font-size: 11px;
             color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .live-tag {
-            background: rgba(255, 0, 127, 0.15);
-            color: var(--accent-pink);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
-        .teams-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 15px;
+        .time-badge {
+            background: var(--neon-pink);
+            color: white;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
         }
 
-        .team-row {
+        .live-indicator {
+            color: var(--neon-pink);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+        }
+
+        .live-indicator::before {
+            content: '●';
+            font-size: 9px;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 110px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+
+        .team-line {
             display: flex;
             align-items: center;
             gap: 12px;
+            margin: 8px 0;
             font-size: 15px;
-            font-weight: 500;
         }
 
-        .team-flag {
-            width: 24px;
-            height: 24px;
+        .flag-circle {
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            object-fit: cover;
+            background: #25283d;
         }
 
-        .card-footer {
+        .card-servers {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 12px;
-            font-size: 12px;
+        }
+
+        .server-logos {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mini-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #252a45;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: bold;
+            border: 1px solid #3b4366;
+        }
+
+        /* Categories Grid */
+        .grid-title {
+            font-size: 16px;
+            margin-bottom: 12px;
             color: var(--text-muted);
         }
 
-        .server-badges {
-            display: flex;
-            gap: 6px;
-        }
-
-        .server-badge {
-            background: #1c213a;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            color: #fff;
-            border: 1px solid #2d3554;
-        }
-
-        /* Categories Grid Layout */
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 15px 0 15px 0;
-        }
-
-        .categories-grid {
+        .app-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
 
-        .category-card {
+        .grid-item {
             background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 5px;
+            padding: 12px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             cursor: pointer;
-            border: 1px solid #1e2538;
-            transition: transform 0.2s;
         }
 
-        .category-card:active {
-            transform: scale(0.95);
-        }
-
-        .category-icon {
-            width: 45px;
-            height: 45px;
+        .grid-icon-circle {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #1e243d, #11152b);
+            background: #1a1d36;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 8px;
-            font-size: 18px;
-            color: var(--accent-blue);
+            border: 1px solid #2d345e;
         }
 
-        .category-name {
+        .grid-item span {
             font-size: 11px;
             font-weight: 500;
-            color: #e2e8f0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
         }
 
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            background: rgba(17, 20, 36, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid #1e2538;
-            z-index: 100;
-            border-radius: 20px 20px 0 0;
+        /* Settings View Styles */
+        .settings-header {
+            text-align: center;
+            padding: 20px 0;
         }
 
-        .nav-item {
+        .settings-logo {
+            width: 60px;
+            height: 60px;
+            background: #1a1d36;
+            border-radius: 15px;
+            margin: 0 auto 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--neon-cyan);
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            background: #111424;
+            border: 1px solid var(--border-color);
+        }
+
+        .setting-group-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin: 15px 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .setting-item {
+            background: var(--card-bg);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 14px;
+        }
+
+        .setting-item:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        .setting-item:last-child { border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; border-bottom: none; }
+
+        .setting-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Custom Switch */
+        .switch {
+            width: 36px;
+            height: 20px;
+            background: #2d345e;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+        .switch::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+        }
+
+        /* Bottom Fixed Navigation Bar */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #101221;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-radius: 18px 18px 0 0;
+            z-index: 99;
+        }
+
+        .nav-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
             color: var(--text-muted);
             font-size: 11px;
             cursor: pointer;
-            text-decoration: none;
             gap: 4px;
+            width: 70px;
         }
 
-        .nav-item i {
-            font-size: 20px;
+        .nav-btn i {
+            font-size: 18px;
         }
 
-        .nav-item.active {
-            color: var(--accent-blue);
+        .nav-btn.active {
+            color: var(--neon-cyan);
         }
 
-        .nav-item.live-center {
-            position: relative;
-            color: var(--accent-pink);
+        .nav-btn.live-btn {
+            color: var(--text-muted);
         }
-
-        @keyframes blink {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+        .nav-btn.live-btn.active {
+            color: #00f0ff;
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 20px;
+            padding: 2px 0;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">SportzX</div>
-        <div class="header-icons">
-            <i class="fa-solid fa-rotate-right"></i>
-            <i class="fa-solid fa-heart"></i>
-            <i class="fa-solid fa-magnifying-glass"></i>
+    <div class="phone-container">
+        <div class="status-bar">
+            <span>8:12</span>
+            <span>4G 📶 [26]</span>
         </div>
-    </header>
 
-    <main>
-        
-        <div class="video-container">
-            <div class="video-placeholder">
-                <div class="player-controls-overlay">
-                    <div class="player-top">
-                        <i class="fa-solid fa-arrow-left"></i>
-                        <span class="player-title">Liechtenstein vs Cyprus</span>
-                        <i class="fa-solid fa-sliders"></i>
+        <header>
+            <div class="logo">SportzX</div>
+            <div class="icons">
+                <i class="fa-solid fa-rotate-right"></i>
+                <i class="fa-solid fa-heart"></i>
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+        </header>
+
+        <div class="ticker-wrap">
+            <div class="ticker-text">
+                📢 stick code: 6889177 .. Official website is "sportzxtv.com" .. Enjoy Live High Quality Streams!
+            </div>
+        </div>
+
+        <div class="content-area">
+
+            <div id="view-live" class="view-section active">
+                <div class="sports-row">
+                    <div class="sport-circle active">
+                        <div class="icon-box"><i class="fa-solid fa-border-all" style="color: #a58aff;"></i></div>
+                        <span style="font-size: 10px;">All</span>
                     </div>
-                    <div class="player-center">
-                        <i class="fa-solid fa-backward"></i>
-                        <div class="play-btn">
-                            <i class="fa-solid fa-pause"></i>
-                        </div>
-                        <i class="fa-solid fa-forward"></i>
+                    <div class="sport-circle">
+                        <div class="icon-box"><i class="fa-solid fa-baseball-bat-ball" style="color: #4da6ff;"></i></div>
+                        <span style="font-size: 10px;">Cricket</span>
                     </div>
-                    <div class="progress-bar-container">
-                        <div class="timeline">
-                            <div class="progress"></div>
+                    <div class="sport-circle">
+                        <div class="icon-box"><i class="fa-solid fa-w" style="color: #ff4d4d;"></i></div>
+                        <span style="font-size: 10px;">WWE</span>
+                    </div>
+                    <div class="sport-circle">
+                        <div class="icon-box"><i class="fa-solid fa-flag-checkered" style="color: #ffcc00;"></i></div>
+                        <span style="font-size: 10px;">F1</span>
+                    </div>
+                    <div class="sport-circle">
+                        <div class="icon-box"><i class="fa-solid fa-table-tennis-pools" style="color: #33cc66;"></i></div>
+                        <span style="font-size: 10px;">Tennis</span>
+                    </div>
+                </div>
+
+                <div class="tabs-row">
+                    <div class="filter-tab active">✓ All (33)</div>
+                    <div class="filter-tab"><span class="dot"></span> Live now (4)</div>
+                    <div class="filter-tab"><i class="fa-regular fa-calendar"></i> Today's (14)</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="card-meta">
+                        <span class="time-badge">05:11:58</span>
+                        <span class="live-indicator">Live</span>
+                    </div>
+                    <div style="background: linear-gradient(45deg, #c33724, #6b180d); height: 100px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: bold; font-size: 18px; letter-spacing: 1px;">ROLAND GARROS</span>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted);">Tennis | Roland-Garros</span>
+                </div>
+
+                <div class="match-card">
+                    <div class="card-meta">
+                        <span>CRICKET | ENGLAND VS NEW ZEALAND</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <div class="team-line"><div class="flag-circle" style="background: #cf142b;"></div> England</div>
+                            <div class="team-line"><div class="flag-circle" style="background: #00247d;"></div> New Zealand</div>
                         </div>
-                        <div class="time-info">
-                            <span>59:27</span>
-                            <span>1:00:00</span>
+                        <div style="text-align: right;">
+                            <span class="time-badge" style="display: block; margin-bottom: 5px;">04:11:58</span>
+                            <span class="live-indicator">Live</span>
                         </div>
+                    </div>
+                    <div class="card-servers">
+                        <div class="server-logos">
+                            <div class="mini-logo" style="color:#00f0ff">W</div>
+                            <div class="mini-logo" style="color:#ff007f">W</div>
+                            <div class="mini-logo" style="background:red; font-size:7px">sky</div>
+                            <div class="mini-logo" style="background:#00247d; font-size:7px">FOX</div>
+                            <div class="mini-logo">+1</div>
+                        </div>
+                        <span style="font-size: 11px; color: var(--text-muted);">5 Servers</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="sports-carousel">
-            <div class="sport-item active">
-                <div class="sport-icon-wrapper"><i class="fa-solid fa-globe"></i></div>
-                <span style="font-size: 11px;">All</span>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon-wrapper"><i class="fa-solid fa-baseball-bat-ball"></i></div>
-                <span style="font-size: 11px;">Cricket</span>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon-wrapper"><i class="fa-solid fa-bolt"></i></div>
-                <span style="font-size: 11px;">WWE</span>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon-wrapper"><i class="fa-solid fa-flag-checkered"></i></div>
-                <span style="font-size: 11px;">F1</span>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon-wrapper"><i class="fa-solid fa-table-tennis-pools"></i></div>
-                <span style="font-size: 11px;">Tennis</span>
-            </div>
-        </div>
 
-        <div class="filter-tabs">
-            <div class="tab active"><i class="fa-solid fa-check"></i> All (33)</div>
-            <div class="tab"><span class="live-dot"></span> Live now (4)</div>
-            <div class="tab">Today's (14)</div>
-        </div>
-
-        <div class="match-card">
-            <div class="card-header">
-                <span>Cricket | England vs New Zealand</span>
-                <span class="live-tag">● LIVE</span>
-            </div>
-            <div class="teams-container">
-                <div class="team-row">
-                    <img class="team-flag" src="https://flagcdn.com/w40/gb-eng.png" alt="England">
-                    <span>England</span>
-                </div>
-                <div class="team-row">
-                    <img class="team-flag" src="https://flagcdn.com/w40/nz.png" alt="New Zealand">
-                    <span>New Zealand</span>
+            <div id="view-categories" class="view-section">
+                <div class="grid-title">Categories</div>
+                <div class="app-grid">
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-trophy" style="color: #00f0ff;"></i></div>
+                        <span>Sports</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-circle-dot" style="color: #ff3b30;"></i></div>
+                        <span>Bangla</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-gopuram" style="color: #ff9500;"></i></div>
+                        <span>Kolkata</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-flag" style="color: #34c759;"></i></div>
+                        <span>India</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-star" style="color: #af52de;"></i></div>
+                        <span>Pakistan</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-newspaper" style="color: #ffcc00;"></i></div>
+                        <span>News</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-masks-theater" style="color: #5ac8fa;"></i></div>
+                        <span>Entertainment</span>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-icon-circle"><i class="fa-solid fa-film" style="color: #ff2d55;"></i></div>
+                        <span>Movie</span>
+                    </div>
                 </div>
             </div>
-            <div class="card-footer">
-                <div class="server-badges">
-                    <span class="server-badge">Sky Sports</span>
-                    <span class="server-badge">Willow</span>
-                    <span class="server-badge">Fox</span>
+
+
+            <div id="view-settings" class="view-section">
+                <div class="settings-header">
+                    <div class="settings-logo">
+                        <i class="fa-solid fa-play" style="font-size: 24px; color: var(--neon-cyan);"></i>
+                    </div>
+                    <h3>SportzX</h3>
+                    <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Version 2.5 (Stable)</p>
+                    
+                    <div class="social-row">
+                        <div class="social-btn" style="color: #24A1DE;"><i class="fa-brands fa-telegram"></i></div>
+                        <div class="social-btn" style="color: #1877F2;"><i class="fa-brands fa-facebook"></i></div>
+                        <div class="social-btn" style="color: #1DA1F2;"><i class="fa-brands fa-twitter"></i></div>
+                        <div class="social-btn" style="color: #E1306C;"><i class="fa-brands fa-instagram"></i></div>
+                    </div>
                 </div>
-                <span>5 Servers</span>
+
+                <div class="setting-group-title">Playback Features</div>
+                <div>
+                    <div class="setting-item">
+                        <div class="setting-left"><i class="fa-solid fa-tower-broadcast"></i> Network Stream</div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-left"><i class="fa-solid fa-list-ul"></i> Playlists</div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-left"><i class="fa-solid fa-window-restore"></i> Floating Player</div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <i class="fa-solid fa-gear"></i> 
+                            <div>
+                                <div>Force Low Quality</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">Forces lowest resolution on mobile data</div>
+                            </div>
+                        </div>
+                        <div class="switch"></div>
+                    </div>
+                </div>
             </div>
+
         </div>
 
-        <div class="section-title">Categories</div>
-        <div class="categories-grid">
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-trophy"></i></div>
-                <div class="category-name">Sports</div>
+        <nav class="bottom-nav">
+            <div class="nav-btn" onclick="switchTab('view-live', this)">
+                <i class="fa-solid fa-tv"></i>
+                <span>Home</span>
             </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-language"></i></div>
-                <div class="category-name">Bangla</div>
+            <div class="nav-btn" onclick="switchTab('view-categories', this)">
+                <i class="fa-solid fa-grip"></i>
+                <span>Categories</span>
             </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <div class="category-name">Kolkata</div>
+            <div class="nav-btn active live-btn" onclick="switchTab('view-live', this)">
+                <i class="fa-solid fa-tower-broadcast"></i>
+                <span>Live Events</span>
             </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-flag"></i></div>
-                <div class="category-name">India</div>
+            <div class="nav-btn" onclick="switchTab('view-settings', this)">
+                <i class="fa-solid fa-gears"></i>
+                <span>Settings</span>
             </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-newspaper"></i></div>
-                <div class="category-name">News</div>
-            </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-masks-theater"></i></div>
-                <div class="category-name">Movie</div>
-            </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-child"></i></div>
-                <div class="category-name">Kids</div>
-            </div>
-            <div class="category-card">
-                <div class="category-icon"><i class="fa-solid fa-music"></i></div>
-                <div class="category-name">Music</div>
-            </div>
-        </div>
+        </nav>
+    </div>
 
-    </main>
-
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-tv"></i>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-list"></i>
-            <span>Categories</span>
-        </a>
-        <a href="#" class="nav-item live-center active">
-            <i class="fa-solid fa-tower-broadcast"></i>
-            <span>Live Events</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-gear"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
-
+    <script>
+        function switchTab(viewId, element) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => view.classList.remove('active'));
+            
+            // Show selected view
+            document.getElementById(viewId).classList.add('active');
+            
+            // Handle Nav active class
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
