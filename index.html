@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<title>All Sports</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#0a0a0f}
+:root{--bg:#0a0a0f;--card:#111118;--card2:#16161f;--border:#1e1e2e;--accent:#00d4ff;--red:#ef4444;--green:#22c55e;--text:#e8eaf0;--muted:#6b7280}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:420px;margin:0 auto;height:100vh;position:relative;overflow:hidden;background:var(--bg)}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .25s;overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+.screen.hidden{transform:translateX(105%);opacity:0;pointer-events:none}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;background:var(--bg);position:sticky;top:0;z-index:10;border-bottom:.5px solid var(--border)}
+.logo{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+.logo span{color:var(--accent)}
+.logo small{font-size:9px;font-weight:500;color:var(--muted);display:block;letter-spacing:2px;margin-top:-4px;font-family:'Inter',sans-serif}
+.topbar-icons{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--card2);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--muted);font-size:18px}
+.icon-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* SPORT TABS */
+.sport-tabs{display:flex;gap:10px;padding:10px 16px 6px;overflow-x:auto;scrollbar-width:none}
+.sport-tabs::-webkit-scrollbar{display:none}
+.sport-tab{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;cursor:pointer}
+.sport-icon{width:50px;height:50px;border-radius:50%;background:var(--card2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s}
+.sport-tab.active .sport-icon{background:linear-gradient(135deg,var(--accent),#7c3aed);border-color:var(--accent);box-shadow:0 0 14px rgba(0,212,255,.3)}
+.sport-tab-label{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.sport-tab.active .sport-tab-label{color:var(--accent)}
+
+/* FILTER */
+.filter-row{display:flex;gap:8px;padding:4px 16px 10px;overflow-x:auto;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.pill{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;border:.5px solid var(--border);color:var(--muted);background:var(--card2);transition:all .15s;flex-shrink:0}
+.pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* SEARCH */
+.search-wrap{margin:0 16px 8px;background:var(--card2);border:.5px solid var(--border);border-radius:12px;display:none;align-items:center;gap:8px;padding:10px 14px}
+.search-wrap.show{display:flex}
+.search-wrap input{background:none;border:none;outline:none;color:var(--text);font-size:14px;flex:1;font-family:'Inter',sans-serif}
+.search-wrap input::placeholder{color:var(--muted)}
+
+/* SECTION HEAD */
+.section-head{padding:12px 16px 6px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.section-head::after{content:'';flex:1;height:.5px;background:var(--border)}
+
+/* MATCH CARD */
+.match-card{margin:5px 12px;background:var(--card);border-radius:14px;border:.5px solid var(--border);overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.match-card:active{transform:scale(.98)}
+.match-card.live-card{border-left:3px solid var(--red)}
+.match-card.hot-card{border-left:3px solid #f59e0b}
+
+.card-header{padding:8px 12px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--border)}
+.card-sport-label{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.sport-dot{width:16px;height:16px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:10px}
+.card-badges{display:flex;align-items:center;gap:6px}
+.live-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--red);background:rgba(239,68,68,.1);padding:2px 8px;border-radius:5px;border:.5px solid rgba(239,68,68,.3)}
+.live-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hot-badge{font-size:10px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,.1);padding:2px 8px;border-radius:5px;border:.5px solid rgba(245,158,11,.3)}
+.soon-badge{font-size:10px;color:var(--muted)}
+.date-badge{font-size:10px;color:var(--accent);font-weight:600}
+
+.card-body{padding:10px 12px;display:flex;align-items:center;gap:10px}
+.card-time-col{min-width:70px}
+.card-time-main{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1}
+.card-time-sub{font-size:10px;color:var(--accent);margin-top:2px;font-weight:600}
+.card-divider{width:.5px;height:44px;background:var(--border);flex-shrink:0}
+.card-teams-col{flex:1;padding:0 10px}
+.team-row{display:flex;align-items:center;gap:8px;margin:3px 0}
+.team-logo{width:24px;height:24px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;overflow:hidden}
+.team-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.team-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;color:var(--text)}
+.card-right{text-align:right;flex-shrink:0;min-width:60px}
+.live-timer{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums}
+.starts-in{font-size:10px;color:var(--muted);line-height:1.4}
+.starts-val{font-size:13px;font-weight:600;color:var(--accent)}
+
+.card-footer{padding:8px 12px;background:rgba(0,0,0,.2);display:flex;align-items:center;justify-content:space-between;border-top:.5px solid var(--border)}
+.srv-logos{display:flex;gap:5px;align-items:center}
+.srv-logo-item{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:#fff;flex-shrink:0}
+.srv-more-badge{width:26px;height:26px;border-radius:7px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);border:.5px solid var(--border)}
+.srv-txt{font-size:11px;color:var(--muted);font-weight:500;margin-left:4px}
+.card-fav{font-size:18px;color:var(--border);cursor:pointer;transition:color .15s;padding:4px}
+.card-fav.on{color:#f59e0b}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:rgba(10,10,15,.97);backdrop-filter:blur(20px);border-top:.5px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 max(14px,env(safe-area-inset-bottom));z-index:20}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10px;transition:color .15s;padding:0 12px;font-family:'Inter',sans-serif}
+.ni.active{color:var(--accent)}
+.ni-icon{font-size:22px}
+
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:60px 24px;color:var(--muted)}
+.empty-icon{font-size:48px;display:block;margin-bottom:14px}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:16px}
+.spin{width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scroll-body{padding-bottom:90px}
+
+/* ===== STREAM SCREEN ===== */
+.stream-screen-wrap{background:var(--bg);min-height:100%;padding-bottom:20px}
+
+/* VIDEO PLAYER - full width like screenshot */
+.player-section{background:#000;position:relative}
+.player-topbar{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(rgba(0,0,0,.7),transparent)}
+.back-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:20px}
+.player-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-top-icons{display:flex;gap:12px}
+.player-top-icons span{font-size:18px;color:#fff;cursor:pointer;opacity:.9}
+.video-el{width:100%;height:220px;display:block;object-fit:cover;background:#000}
+.player-controls{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:20px 14px 10px}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.prog-wrap{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:2px;cursor:pointer;position:relative}
+.prog-fill{height:100%;background:var(--red);border-radius:2px;width:8%;transition:width .5s linear}
+.prog-handle{position:absolute;top:-4px;width:11px;height:11px;background:#fff;border-radius:50%;margin-left:-5px;pointer-events:none}
+.time-start{font-size:11px;color:#fff;font-family:'Rajdhani',sans-serif}
+.time-end{font-size:11px;color:#fff;font-family:'Rajdhani',sans-serif}
+.ctrl-row{display:flex;align-items:center;justify-content:center;gap:24px}
+.ctrl-icon{font-size:20px;color:#fff;cursor:pointer;opacity:.9}
+.ctrl-play{font-size:32px;color:#fff;cursor:pointer}
+.p-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);transition:opacity .3s}
+.p-overlay.hide{opacity:0;pointer-events:none}
+.buf{width:40px;height:40px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+
+/* SERVER TABS (like SportzX screenshot) */
+.server-tab-row{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;scrollbar-width:none}
+.server-tab-row::-webkit-scrollbar{display:none}
+.srv-tab{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;background:var(--card2);border:.5px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.srv-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.srv-tab-check{display:none;font-size:12px}
+.srv-tab.active .srv-tab-check{display:inline}
+
+/* CHANNEL TABS */
+.ch-tab-row{display:flex;background:var(--card2);border-radius:12px;padding:3px;margin:0 12px 8px;border:.5px solid var(--border)}
+.ch-tab{flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:9px;transition:all .15s;font-family:'Rajdhani',sans-serif;font-size:13px}
+.ch-tab.active{background:var(--accent);color:#000}
+
+/* SERVER LIST */
+.srv-list{padding:0 12px 8px}
+.srv-item{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:12px;border:.5px solid var(--border);padding:11px 14px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.srv-item:active{background:var(--card)}
+.srv-item.active-srv{border-color:var(--accent);background:rgba(0,212,255,.05)}
+.srv-num-badge{width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0;font-family:'Rajdhani',sans-serif}
+.srv-item.active-srv .srv-num-badge{background:var(--accent);color:#000}
+.srv-info{flex:1}
+.srv-item-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.srv-item-qual{font-size:11px;color:var(--muted);margin-top:1px}
+.srv-ping{text-align:right}
+.srv-ping-val{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--green)}
+.srv-ping-bars{display:flex;gap:2px;align-items:flex-end;justify-content:flex-end;margin-top:3px}
+.pb{width:3px;border-radius:1px;background:var(--border)}
+.pb.on{background:var(--green)}
+.pb.med{background:#f59e0b}
+.play-tag{font-size:9px;font-weight:700;color:var(--accent);background:rgba(0,212,255,.1);padding:2px 6px;border-radius:4px;border:.5px solid rgba(0,212,255,.3);margin-left:auto}
+
+/* CHANNEL CARDS */
+.ch-list{padding:0 12px}
+.ch-sec-lbl{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--muted);padding:10px 0 5px;text-transform:uppercase;letter-spacing:1px}
+.ch-card{display:flex;align-items:center;gap:12px;background:var(--card2);border-radius:12px;border:.5px solid var(--border);padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:all .15s;position:relative}
+.ch-card:active{background:var(--card)}
+.ch-card.active-ch{border-color:var(--accent);background:rgba(0,212,255,.04)}
+.ch-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.ch-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.ch-country{font-size:11px;color:var(--muted);margin-top:1px}
+.ch-qual{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:4px}
+.ch-ping{font-size:10px;color:var(--muted);text-align:right}
+.playing-tag{position:absolute;top:8px;right:10px;font-size:9px;font-weight:700;color:var(--accent);background:rgba(0,212,255,.1);padding:2px 6px;border-radius:4px;border:.5px solid rgba(0,212,255,.3)}
+
+/* NP BAR */
+.np-bar{margin:8px 12px;background:rgba(0,212,255,.06);border:.5px solid rgba(0,212,255,.2);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.np-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:blink 1s infinite;flex-shrink:0}
+.np-info{flex:1;min-width:0}
+.np-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-qual{font-size:11px;color:rgba(0,212,255,.5);margin-top:1px}
+.np-ping{font-size:12px;color:var(--green);font-weight:700;flex-shrink:0;font-family:'Rajdhani',sans-serif}
+
+/* CHANNEL PAGE */
+.ch-page-tabs{display:flex;background:var(--card2);border-radius:12px;padding:3px;margin:8px 12px;border:.5px solid var(--border)}
+.ch-page-tab{flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:9px;transition:all .15s;font-family:'Rajdhani',sans-serif;font-size:13px}
+.ch-page-tab.active{background:var(--accent);color:#000}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- MAIN SCREEN -->
+  <div class="screen" id="mainScreen">
+    <div class="topbar">
+      <div class="logo">All Sports<span>.</span><small>LIVE STREAMING</small></div>
+      <div class="topbar-icons">
+        <div class="icon-btn" onclick="loadData()">↻</div>
+        <div class="icon-btn" id="favBtn" onclick="toggleFavView()">♡</div>
+        <div class="icon-btn" id="searchBtn" onclick="toggleSearch()">⌕</div>
+      </div>
+    </div>
+
+    <div class="search-wrap" id="searchWrap">
+      <span style="color:var(--muted);font-size:16px">⌕</span>
+      <input type="text" id="searchIn" placeholder="Search matches, teams..." oninput="applySearch()">
+      <span style="cursor:pointer;color:var(--muted)" onclick="clearSearch()">✕</span>
+    </div>
+
+    <div class="sport-tabs">
+      <div class="sport-tab active" onclick="setSport('all',this)"><div class="sport-icon">🏆</div><div class="sport-tab-label">All</div></div>
+      <div class="sport-tab" onclick="setSport('live',this)"><div class="sport-icon">🔴</div><div class="sport-tab-label">Live</div></div>
+      <div class="sport-tab" onclick="setSport('cricket',this)"><div class="sport-icon">🏏</div><div class="sport-tab-label">Cricket</div></div>
+      <div class="sport-tab" onclick="setSport('football',this)"><div class="sport-icon">⚽</div><div class="sport-tab-label">Football</div></div>
+      <div class="sport-tab" onclick="setSport('motogp',this)"><div class="sport-icon">🏍️</div><div class="sport-tab-label">MotoGP</div></div>
+      <div class="sport-tab" onclick="setSport('f1',this)"><div class="sport-icon">🏎️</div><div class="sport-tab-label">F1</div></div>
+      <div class="sport-tab" onclick="setSport('wrestling',this)"><div class="sport-icon">💪</div><div class="sport-tab-label">WWE</div></div>
+      <div class="sport-tab" onclick="setSport('channels',this)"><div class="sport-icon">📺</div><div class="sport-tab-label">Channels</div></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="pill active" onclick="setFilter('all',this)">All</div>
+      <div class="pill" onclick="setFilter('live',this)">● Live</div>
+      <div class="pill" onclick="setFilter('cricket',this)">Cricket</div>
+      <div class="pill" onclick="setFilter('football',this)">Football</div>
+      <div class="pill" onclick="setFilter('motogp',this)">MotoGP</div>
+      <div class="pill" onclick="setFilter('f1',this)">F1</div>
+      <div class="pill" onclick="setFilter('wrestling',this)">WWE</div>
+    </div>
+
+    <div class="scroll-body" id="matchList"></div>
+
+    <div class="bnav">
+      <div class="ni active" onclick="switchNav('home',this)"><div class="ni-icon">🏠</div><span>Home</span></div>
+      <div class="ni" onclick="switchNav('live',this)"><div class="ni-icon">▶️</div><span>Live</span></div>
+      <div class="ni" onclick="switchNav('channels',this)"><div class="ni-icon">📺</div><span>Channels</span></div>
+      <div class="ni" onclick="switchNav('fav',this)"><div class="ni-icon">❤️</div><span>Favorites</span></div>
+      <div class="ni" onclick="switchNav('settings',this)"><div class="ni-icon">⚙️</div><span>Settings</span></div>
+    </div>
+  </div>
+
+  <!-- STREAM SCREEN -->
+  <div class="screen hidden" id="streamScreen">
+    <div class="stream-screen-wrap">
+
+      <!-- VIDEO PLAYER -->
+      <div class="player-section">
+        <div class="player-topbar">
+          <div class="back-btn" onclick="goBack()">←</div>
+          <div class="player-title" id="stitle">Match</div>
+          <div class="player-top-icons">
+            <span onclick="castVideo()">📡</span>
+            <span onclick="toggleMute()">🔇</span>
+            <span>⚙️</span>
+            <span onclick="toggleFullscreen()">⛶</span>
+            <span>🔒</span>
+          </div>
+        </div>
+
+        <video class="video-el" id="vid" autoplay muted playsinline loop
+          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+
+        <div class="p-overlay" id="povl">
+          <div class="buf" id="buf"></div>
+        </div>
+
+        <div class="player-controls">
+          <div class="prog-row">
+            <span class="time-start" id="timeStart">00:00</span>
+            <div class="prog-wrap" onclick="seek(event)">
+              <div class="prog-fill" id="pfill">
+                <div class="prog-handle"></div>
+              </div>
+            </div>
+            <span class="time-end" id="timeEnd">00:24</span>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-icon">FILL</span>
+            <span class="ctrl-icon" onclick="skipBack()">⏪</span>
+            <span class="ctrl-play" id="playIcon" onclick="playPause()">⏸</span>
+            <span class="ctrl-icon" onclick="skipFwd()">⏩</span>
+            <span class="ctrl-icon" onclick="toggleFullscreen()">⛶</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOW PLAYING -->
+      <div class="np-bar">
+        <div class="np-dot"></div>
+        <div class="np-info">
+          <div class="np-name" id="npname">Select a server below</div>
+          <div class="np-qual" id="npqual">Tap server or channel to stream</div>
+        </div>
+        <div class="np-ping" id="npping">--ms</div>
+      </div>
+
+      <!-- SERVER TABS like SportzX -->
+      <div class="server-tab-row" id="srvTabRow"></div>
+
+      <!-- CHANNEL TABS -->
+      <div class="ch-tab-row">
+        <div class="ch-tab active" onclick="setChTab('servers',this)">Servers</div>
+        <div class="ch-tab" onclick="setChTab('asia',this)">Asia</div>
+        <div class="ch-tab" onclick="setChTab('europe',this)">Europe</div>
+        <div class="ch-tab" onclick="setChTab('americas',this)">Americas</div>
+      </div>
+
+      <!-- CONTENT -->
+      <div id="streamContent"></div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+var DATA_URL = './data.json';
+var matches = [], channels = [], favorites = [];
+var curFilter = 'all', curSport = 'all', searchQ = '';
+var showFavs = false, showCh = false;
+var activeSrv = -1, activeCh = null, chTab = 'servers';
+var currentMatch = null;
+var muted = true, ptimer = null, otimer = null, liveTimers = {};
+
+// TIMERS for live countdowns
+function startLiveTimers() {
+  Object.keys(liveTimers).forEach(function(k) { clearInterval(liveTimers[k]); });
+  liveTimers = {};
+}
+
+function loadData() {
+  document.getElementById('matchList').innerHTML = '<div class="loading"><div class="spin"></div></div>';
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', DATA_URL + '?v=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        matches = d.matches || [];
+        channels = d.channels || [];
+        renderPage();
+      } catch(e) {
+        document.getElementById('matchList').innerHTML = '<div class="empty"><span class="empty-icon">⚠️</span><p>' + e.message + '</p></div>';
+      }
+    } else {
+      document.getElementById('matchList').innerHTML = '<div class="empty"><span class="empty-icon">📡</span><p>HTTP ' + xhr.status + '</p></div>';
+    }
+  };
+  xhr.onerror = function() {
+    document.getElementById('matchList').innerHTML = '<div class="empty"><span class="empty-icon">📡</span><p>Network error. Check connection.</p></div>';
+  };
+  xhr.send();
+}
+
+function renderPage() {
+  if (showCh || curSport === 'channels') { renderChannelPage(); }
+  else { renderMatches(); }
+}
+
+// RENDER MATCHES
+function renderMatches() {
+  var list = document.getElementById('matchList');
+  var items = matches.filter(function(m) {
+    if (showFavs) return favorites.indexOf(m.id) !== -1;
+    var sport = curSport !== 'all' ? curSport : curFilter;
+    if (sport === 'live') return m.cat === 'live';
+    if (sport !== 'all') return m.cat === sport;
+    return true;
+  });
+  if (searchQ) {
+    var q = searchQ.toLowerCase();
+    items = items.filter(function(m) { return m.t1.toLowerCase().indexOf(q) !== -1 || m.t2.toLowerCase().indexOf(q) !== -1; });
+  }
+  if (!items.length) {
+    list.innerHTML = '<div class="empty"><span class="empty-icon">' + (showFavs?'❤️':'🔍') + '</span><p>' + (showFavs?'No favorites':'No matches') + '</p></div>';
+    return;
+  }
+  var catNames = {live:'🔴 Live Now', cricket:'🏏 Cricket', football:'⚽ Football', motogp:'🏍️ MotoGP', f1:'🏎️ Formula 1', wrestling:'💪 WWE / Boxing'};
+  var groups = {};
+  items.forEach(function(m) { if (!groups[m.cat]) groups[m.cat] = []; groups[m.cat].push(m); });
+  var html = '';
+  Object.keys(groups).forEach(function(cat) {
+    html += '<div class="section-head">' + (catNames[cat]||cat) + '</div>';
+    groups[cat].forEach(function(m) { html += buildCard(m); });
+  });
+  list.innerHTML = html;
+  // start live timers
+  items.filter(function(m){return m.cat==='live';}).forEach(function(m){ startCardTimer(m.id); });
+}
+
+function buildCard(m) {
+  var isLive = m.cat === 'live';
+  var isHot = !isLive && Math.random() > 0.7;
+  var faved = favorites.indexOf(m.id) !== -1;
+  var srvs = m.servers || [];
+  var srvColors = ['#ef4444','#3b82f6','#22c55e','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#f97316'];
+  var logos = srvs.slice(0,4).map(function(s,i){ return '<div class="srv-logo-item" style="background:'+srvColors[i%srvColors.length]+'">'+s.type.substring(0,3)+'</div>'; }).join('');
+  var moreTag = srvs.length>4 ? '<div class="srv-more-badge">+' + (srvs.length-4) + '</div>' : '';
+  var badgeHtml = isLive
+    ? '<div class="live-badge"><div class="live-dot"></div>Live</div>'
+    : isHot ? '<div class="hot-badge">HOT 🔥</div>'
+    : '';
+  var dateHtml = !isLive ? '<span class="date-badge">' + m.time + '</span>' : '';
+  var timeColHtml = isLive
+    ? '<div class="card-time-col"><div class="live-timer" id="timer_'+m.id+'">00:00:00</div></div>'
+    : '<div class="card-time-col"><div class="card-time-main">' + (m.time||'').split(' ')[0] + '</div><div class="card-time-sub">' + ((m.time||'').split(' ')[1]||'') + '</div></div>';
+  var rightHtml = isLive
+    ? '<div class="card-right"><div class="live-badge"><div class="live-dot"></div>Live</div></div>'
+    : '<div class="card-right"><div class="starts-in">Starts in</div><div class="starts-val">' + m.starts + '</div></div>';
+  var flag2 = m.flag2
+    ? '<div class="team-row"><div class="team-logo">'+m.flag2+'</div><span class="team-name">'+m.t2+'</span></div>'
+    : '<div class="team-row"><span style="font-size:12px;color:var(--muted)">'+m.t2+'</span></div>';
+  return '<div class="match-card'+(isLive?' live-card':isHot?' hot-card':'')+'" onclick="openStream('+m.id+')">'
+    + '<div class="card-header">'
+    + '<div class="card-sport-label"><div class="sport-dot">' + getSportEmoji(m.cat) + '</div>' + m.cat.toUpperCase() + (m.t1&&m.t2?' | '+m.t1.toUpperCase()+' VS '+m.t2.toUpperCase():'') + '</div>'
+    + '<div class="card-badges">' + dateHtml + badgeHtml + '</div>'
+    + '</div>'
+    + '<div class="card-body">'
+    + timeColHtml
+    + '<div class="card-divider"></div>'
+    + '<div class="card-teams-col">'
+    + '<div class="team-row"><div class="team-logo">'+m.flag1+'</div><span class="team-name">'+m.t1+'</span></div>'
+    + flag2
+    + '</div>'
+    + rightHtml
+    + '</div>'
+    + '<div class="card-footer">'
+    + '<div class="srv-logos">'+logos+moreTag+'<span class="srv-txt">'+srvs.length+' Servers</span></div>'
+    + '<span class="card-fav'+(faved?' on':'')+'" onclick="toggleFav(event,'+m.id+')">★</span>'
+    + '</div>'
+    + '</div>';
+}
+
+function getSportEmoji(cat) {
+  var m = {live:'🔴',cricket:'🏏',football:'⚽',motogp:'🏍️',f1:'🏎️',wrestling:'💪',tennis:'🎾',basketball:'🏀',baseball:'⚾'};
+  return m[cat] || '🏆';
+}
+
+function startCardTimer(id) {
+  var el = document.getElementById('timer_'+id);
+  if (!el) return;
+  var secs = Math.floor(Math.random()*3600);
+  liveTimers[id] = setInterval(function() {
+    secs++;
+    var h = Math.floor(secs/3600), m2 = Math.floor((secs%3600)/60), s = secs%60;
+    var el2 = document.getElementById('timer_'+id);
+    if (el2) el2.textContent = pad(h)+':'+pad(m2)+':'+pad(s);
+  }, 1000);
+}
+
+function pad(n) { return n<10?'0'+n:n; }
+
+// CHANNEL PAGE
+function renderChannelPage() {
+  var list = document.getElementById('matchList');
+  if (!channels.length) {
+    list.innerHTML = '<div class="empty"><span class="empty-icon">📺</span><p>No channels.<br>Import M3U in admin panel.</p></div>';
+    return;
+  }
+  // tabs
+  var tabHtml = '<div class="ch-page-tabs">'
+    + '<div class="ch-page-tab active" onclick="setChPageTab(\'all\',this)">All</div>'
+    + '<div class="ch-page-tab" onclick="setChPageTab(\'asia\',this)">Asia</div>'
+    + '<div class="ch-page-tab" onclick="setChPageTab(\'europe\',this)">Europe</div>'
+    + '<div class="ch-page-tab" onclick="setChPageTab(\'americas\',this)">Americas</div>'
+    + '</div>';
+  list.innerHTML = tabHtml + '<div id="chPageList"></div>';
+  renderChPageList('all');
+}
+
+var chPageFilter = 'all';
+function setChPageTab(f, el) {
+  chPageFilter = f;
+  var tabs = document.querySelectorAll('.ch-page-tab');
+  for (var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
+  el.classList.add('active');
+  renderChPageList(f);
+}
+
+function renderChPageList(f) {
+  var el = document.getElementById('chPageList');
+  if (!el) return;
+  var chs = f==='all' ? channels : channels.filter(function(c){return c.region===f;});
+  if (!chs.length) { el.innerHTML='<div class="empty"><span class="empty-icon">📺</span><p>No channels</p></div>'; return; }
+  var g={};
+  chs.forEach(function(c){if(!g[c.country])g[c.country]=[];g[c.country].push(c);});
+  var h='<div class="ch-list">';
+  Object.keys(g).forEach(function(country){
+    h+='<div class="ch-sec-lbl">'+country+'</div>';
+    g[country].forEach(function(c){ h+=buildChCard(c,false,true); });
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function buildChCard(c, isActive, fromPage) {
+  var qc = c.quality==='4K'?'#f59e0b':c.quality==='HD'?'var(--accent)':'var(--muted)';
+  var qb = c.quality==='4K'?'rgba(245,158,11,.1)':c.quality==='HD'?'rgba(0,212,255,.1)':'var(--card)';
+  var fn = fromPage ? 'openChDirect' : 'selectCh';
+  return '<div class="ch-card'+(isActive?' active-ch':'')+'" onclick="'+fn+'(\''+c.id+'\')">'
+    +(isActive?'<span class="playing-tag">▶ Playing</span>':'')
+    +'<div class="ch-logo" style="background:'+c.color+';color:'+c.text+'">'+c.short+'</div>'
+    +'<div style="flex:1;min-width:0">'
+    +'<div class="ch-name">'+c.name+'</div>'
+    +'<div class="ch-country">'+c.country+'</div>'
+    +'<span class="ch-qual" style="background:'+qb+';color:'+qc+'">'+c.quality+'</span>'
+    +'</div>'
+    +'<div style="text-align:right;flex-shrink:0"><div class="ch-ping">'+c.ping+'ms</div></div>'
+    +'</div>';
+}
+
+// OPEN STREAM
+function openStream(id) {
+  currentMatch = null;
+  for (var i=0;i<matches.length;i++) { if(matches[i].id===id){currentMatch=matches[i];break;} }
+  if (!currentMatch) return;
+  activeSrv = -1; activeCh = null; chTab = 'servers';
+  document.getElementById('stitle').textContent = currentMatch.t1 + (currentMatch.flag2?' vs '+currentMatch.t2:'');
+  document.getElementById('npname').textContent = 'Select a server below';
+  document.getElementById('npqual').textContent = currentMatch.desc || '';
+  document.getElementById('npping').textContent = '--ms';
+  buildServerTabs();
+  setChTabActive('servers');
+  renderStreamContent();
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('streamScreen').classList.remove('hidden');
+  document.getElementById('streamScreen').scrollTop = 0;
+  autoPlay();
+}
+
+function buildServerTabs() {
+  var srvs = currentMatch ? (currentMatch.servers||[]) : [];
+  var html = '';
+  srvs.forEach(function(s,i) {
+    var isAct = activeSrv === i;
+    html += '<div class="srv-tab'+(isAct?' active':'')+'" onclick="selectServer('+i+')">'
+      +'<span class="srv-tab-check">✓</span>'
+      +s.name+' · '+s.type
+      +'</div>';
+  });
+  document.getElementById('srvTabRow').innerHTML = html;
+}
+
+function openChDirect(id) {
+  var c = getChannel(id);
+  if (!c) return;
+  currentMatch = {id:-1,t1:c.name,t2:'',flag1:'📺',flag2:'',desc:c.country+' · '+c.quality,servers:[]};
+  activeSrv=-1; activeCh=id; chTab='asia';
+  document.getElementById('stitle').textContent = c.name;
+  document.getElementById('npname').textContent = c.name+' · '+c.quality;
+  document.getElementById('npqual').textContent = c.country;
+  document.getElementById('npping').textContent = c.ping+'ms';
+  document.getElementById('srvTabRow').innerHTML = '';
+  setChTabActive('asia');
+  renderStreamContent();
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('streamScreen').classList.remove('hidden');
+  document.getElementById('streamScreen').scrollTop = 0;
+  autoPlay();
+  if (c.stream_url && c.stream_url.length>5) { var v=document.getElementById('vid'); v.src=c.stream_url; v.play(); }
+}
+
+function setChTabActive(t) {
+  chTab = t;
+  var tabs = document.querySelectorAll('.ch-tab');
+  for (var i=0;i<tabs.length;i++) {
+    var tabT = ['servers','asia','europe','americas'][i];
+    tabs[i].classList.toggle('active', tabT===t);
+  }
+}
+
+function setChTab(t, el) {
+  chTab = t;
+  var tabs = document.querySelectorAll('.ch-tab');
+  for (var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
+  el.classList.add('active');
+  renderStreamContent();
+}
+
+function renderStreamContent() {
+  if (chTab === 'servers') { renderServers(); }
+  else { renderChList(chTab); }
+}
+
+function renderServers() {
+  var srvs = currentMatch ? (currentMatch.servers||[]) : [];
+  if (!srvs.length) {
+    document.getElementById('streamContent').innerHTML = '<div class="empty"><span class="empty-icon">📡</span><p>No servers for this match.<br>Choose a channel below.</p></div>';
+    return;
+  }
+  var html = '<div class="srv-list">';
+  srvs.forEach(function(s,i) {
+    var isAct = activeSrv===i;
+    var ping = Math.floor(Math.random()*50)+8;
+    var bars = Math.floor(Math.random()*2)+3;
+    var qc = s.type==='4K'?'#f59e0b':s.type==='HD'||s.type==='HLS'?'var(--accent)':'var(--muted)';
+    var barsHtml = '';
+    for (var b=0;b<5;b++) {
+      var h=(b+1)*4;
+      var cls = b<bars?(bars>=4?'on':'med'):'';
+      barsHtml+='<div class="pb '+cls+'" style="height:'+h+'px"></div>';
+    }
+    html += '<div class="srv-item'+(isAct?' active-srv':'')+'" onclick="selectServer('+i+')">'
+      +'<div class="srv-num-badge">'+(i+1)+'</div>'
+      +'<div class="srv-info">'
+      +'<div class="srv-item-name">'+(s.name||'Server '+(i+1))+'</div>'
+      +'<div class="srv-item-qual">'+s.type+' Stream</div>'
+      +'</div>'
+      +(isAct?'<span class="play-tag">▶ Playing</span>':'')
+      +'<div class="srv-ping"><div class="srv-ping-val">'+ping+'ms</div><div class="srv-ping-bars">'+barsHtml+'</div></div>'
+      +'</div>';
+  });
+  html += '</div>';
+  document.getElementById('streamContent').innerHTML = html;
+}
+
+function renderChList(region) {
+  var chs = channels.filter(function(c){return region==='all'||c.region===region;});
+  if (!chs.length) { document.getElementById('streamContent').innerHTML='<div class="empty"><span class="empty-icon">📺</span><p>No channels</p></div>'; return; }
+  var g={};
+  chs.forEach(function(c){if(!g[c.country])g[c.country]=[];g[c.country].push(c);});
+  var h='<div class="ch-list">';
+  Object.keys(g).forEach(function(country){
+    h+='<div class="ch-sec-lbl">'+country+'</div>';
+    g[country].forEach(function(c){ h+=buildChCard(c,activeCh===c.id,false); });
+  });
+  h+='</div>';
+  document.getElementById('streamContent').innerHTML=h;
+}
+
+function getChannel(id) {
+  for (var i=0;i<channels.length;i++) { if(channels[i].id===id) return channels[i]; }
+  return null;
+}
+
+function selectServer(idx) {
+  activeSrv=idx; activeCh=null;
+  var s = currentMatch&&currentMatch.servers&&currentMatch.servers[idx]?currentMatch.servers[idx]:null;
+  if (s&&s.url&&s.url.length>5) { var v=document.getElementById('vid'); v.src=s.url; v.play(); }
+  else { showBuf(); setTimeout(hideBuf,1500); }
+  var ping = Math.floor(Math.random()*50)+8;
+  document.getElementById('npname').textContent=(s?s.name:'Server '+(idx+1))+' · '+(s?s.type:'');
+  document.getElementById('npqual').textContent='Server '+(idx+1)+' · Playing';
+  document.getElementById('npping').textContent=ping+'ms';
+  buildServerTabs();
+  renderServers();
+  document.getElementById('streamScreen').scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectCh(id) {
+  var c=getChannel(id);
+  if(!c) return;
+  activeCh=id; activeSrv=-1;
+  var v=document.getElementById('vid');
+  if(c.stream_url&&c.stream_url.length>5){v.src=c.stream_url;v.play();}
+  else{showBuf();setTimeout(hideBuf,1500);}
+  document.getElementById('npname').textContent=c.name+' · '+c.quality;
+  document.getElementById('npqual').textContent=c.country+' · '+c.quality;
+  document.getElementById('npping').textContent=c.ping+'ms';
+  renderChList(chTab);
+  document.getElementById('streamScreen').scrollTo({top:0,behavior:'smooth'});
+}
+
+// VIDEO CONTROLS
+function autoPlay() {
+  var v=document.getElementById('vid'); v.muted=true; muted=true;
+  showBuf();
+  var p=v.play();
+  if(p){p.then(function(){hideBuf();document.getElementById('playIcon').textContent='⏸';startProg();}).catch(function(){hideBuf();});}
+}
+function showBuf(){document.getElementById('buf').style.display='block';document.getElementById('povl').classList.remove('hide');}
+function hideBuf(){document.getElementById('buf').style.display='none';document.getElementById('povl').classList.add('hide');}
+function playPause(){
+  var v=document.getElementById('vid');
+  if(v.paused){v.play();document.getElementById('playIcon').textContent='⏸';startProg();}
+  else{v.pause();document.getElementById('playIcon').textContent='▶';}
+}
+function toggleMute(){var v=document.getElementById('vid');muted=!muted;v.muted=muted;}
+function skipBack(){var v=document.getElementById('vid');v.currentTime=Math.max(0,v.currentTime-10);}
+function skipFwd(){var v=document.getElementById('vid');v.currentTime=Math.min(v.duration||99,v.currentTime+10);}
+function seek(e){var v=document.getElementById('vid');if(!v.duration)return;var r=e.currentTarget.getBoundingClientRect();v.currentTime=(e.clientX-r.left)/r.width*v.duration;}
+function startProg(){
+  if(ptimer)clearInterval(ptimer);
+  ptimer=setInterval(function(){
+    var v=document.getElementById('vid');
+    if(!v.duration)return;
+    var pct=v.currentTime/v.duration*100;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('timeStart').textContent=fmtTime(v.currentTime);
+    document.getElementById('timeEnd').textContent=fmtTime(v.duration);
+  },500);
+}
+function fmtTime(s){var m=Math.floor(s/60),ss=Math.floor(s%60);return pad(m)+':'+pad(ss);}
+function toggleFullscreen(){var v=document.getElementById('vid');if(v.requestFullscreen)v.requestFullscreen();}
+function castVideo(){}
+function goBack(){
+  var v=document.getElementById('vid');v.pause();
+  if(ptimer)clearInterval(ptimer);
+  document.getElementById('streamScreen').classList.add('hidden');
+  document.getElementById('mainScreen').classList.remove('hidden');
+}
+
+// NAVIGATION
+function setSport(s,el){
+  curSport=s;
+  var tabs=document.querySelectorAll('.sport-tab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');
+  el.classList.add('active');
+  showCh=s==='channels'; showFavs=false;
+  renderPage();
+}
+function setFilter(f,el){
+  curFilter=f; showFavs=false; curSport='all';
+  var pills=document.querySelectorAll('.pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.remove('active');
+  el.classList.add('active');
+  var tabs=document.querySelectorAll('.sport-tab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');
+  tabs[0].classList.add('active');
+  renderMatches();
+}
+function toggleSearch(){
+  var w=document.getElementById('searchWrap');
+  var vis=w.classList.contains('show');
+  w.classList.toggle('show',!vis);
+  document.getElementById('searchBtn').classList.toggle('active',!vis);
+  if(!vis)document.getElementById('searchIn').focus();
+  else{searchQ='';renderPage();}
+}
+function applySearch(){searchQ=document.getElementById('searchIn').value;renderPage();}
+function clearSearch(){searchQ='';document.getElementById('searchIn').value='';renderPage();}
+function toggleFav(e,id){
+  e.stopPropagation();
+  var idx=favorites.indexOf(id);
+  if(idx!==-1)favorites.splice(idx,1);else favorites.push(id);
+  renderPage();
+}
+function toggleFavView(){
+  showFavs=!showFavs; showCh=false; curSport='all';
+  document.getElementById('favBtn').classList.toggle('active',showFavs);
+  renderPage();
+}
+function switchNav(t,el){
+  var nis=document.querySelectorAll('.ni');
+  for(var i=0;i<nis.length;i++)nis[i].classList.remove('active');
+  el.classList.add('active');
+  showFavs=false; showCh=false; curSport='all'; curFilter='all';
+  if(t==='live'){curFilter='live';renderMatches();}
+  else if(t==='channels'){showCh=true;curSport='channels';renderChannelPage();}
+  else if(t==='fav'){showFavs=true;renderPage();}
+  else{renderMatches();}
+  var pills=document.querySelectorAll('.pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle('active',i===0);
+  var sportTabs=document.querySelectorAll('.sport-tab');
+  for(var i=0;i<sportTabs.length;i++)sportTabs[i].classList.remove('active');
+  if(t==='channels')sportTabs[sportTabs.length-1].classList.add('active');
+  else sportTabs[0].classList.add('active');
+}
+
+loadData();
+</script>
+</body>
+</html>
