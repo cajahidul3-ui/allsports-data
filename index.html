@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Sports</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(180deg, #0e0a1a 0%, #06070d 100%);
@@ -33,7 +32,7 @@
             justify-content: center;
         }
 
-        /* Responsive Wrapper: Full width on mobile, centered block on desktop */
+        /* App Wrapper (Edge-to-Edge on Mobile) */
         .app-container {
             width: 100%;
             max-width: 480px;
@@ -46,6 +45,7 @@
             border-right: 1px solid var(--border-color);
         }
 
+        /* App Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -72,7 +72,7 @@
             color: #fff;
         }
 
-        /* Marquee Ticker Section */
+        /* Moving Notice Ticker */
         .ticker-container {
             background: rgba(0, 240, 255, 0.04);
             padding: 8px 14px;
@@ -104,25 +104,7 @@
         .app-view { display: none; }
         .app-view.active { display: block; }
 
-        /* Video Player Styling */
-        .video-box {
-            width: 100%;
-            background: #000;
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            display: none;
-        }
-        .video-box.active { display: block; }
-
-        video {
-            width: 100%;
-            aspect-ratio: 16/9;
-            display: block;
-        }
-
-        /* Horizontal Sports Circular Tabs */
+        /* Horizontal Category Navigation Tabs */
         .sports-nav {
             display: flex;
             gap: 14px;
@@ -158,7 +140,7 @@
         }
         .sport-tab span { font-size: 11px; color: #cbd5e1; }
 
-        /* Filter Row Badges */
+        /* Filter Pills Row */
         .filter-row {
             display: flex;
             gap: 10px;
@@ -195,7 +177,7 @@
             box-shadow: 0 0 8px var(--neon-pink);
         }
 
-        /* Match Card & Overlay Layouts */
+        /* Match Card Components (Graphics Design Only) */
         .match-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -283,7 +265,7 @@
 
         .view-title { font-size: 18px; font-weight: 600; color: #e2e8f0; margin-bottom: 15px; }
 
-        /* Grid Categories Structure */
+        /* Dynamic Grid Layout */
         .grid-layout {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -325,7 +307,7 @@
             width: 100%;
         }
 
-        /* Settings View Layout */
+        /* Settings Interface Layout */
         .settings-top { text-align: center; padding: 15px 0; }
         .app-avatar {
             width: 64px;
@@ -442,14 +424,11 @@
         </header>
 
         <div class="ticker-container">
-            <div class="ticker-text" id="ticker-space">📢 Loading data updates...</div>
+            <div class="ticker-text" id="ticker-space">Loading secure configurations...</div>
         </div>
 
         <div class="main-content">
-            <div class="video-box" id="global-player-container">
-                <video id="live-video-element" controls autoplay playsinline></video>
-            </div>
-
+            
             <div id="panel-live" class="app-view active">
                 <div class="sports-nav">
                     <div class="sport-tab active"><div class="sport-circle"><i class="fa-solid fa-globe" style="color: #a58aff;"></i></div><span>All</span></div>
@@ -460,9 +439,9 @@
                 </div>
 
                 <div class="filter-row">
-                    <div class="filter-btn active">✓ All (33)</div>
-                    <div class="filter-btn"><span class="pulse-dot"></span> Live now (4)</div>
-                    <div class="filter-btn"><i class="fa-regular fa-calendar"></i> Today's (14)</div>
+                    <div class="filter-btn active">✓ All</div>
+                    <div class="filter-btn"><span class="pulse-dot"></span> Live now</div>
+                    <div class="filter-btn"><i class="fa-regular fa-calendar"></i> Today's</div>
                 </div>
 
                 <div id="matches-list-target"></div>
@@ -470,7 +449,7 @@
 
             <div id="panel-categories" class="app-view">
                 <div class="view-title">Categories</div>
-                <div class="grid-layout" id="categories-grid-target"></div>
+                <div id="categories-grid-target" class="grid-layout"></div>
             </div>
 
             <div id="panel-settings" class="app-view">
@@ -512,53 +491,7 @@
     </div>
 
     <script>
-        // ডাইনামিক ইন্টারনাল ডাটাবেস (গিটহাব পেজেস-এর জন্য একদম রেডি)
-        const STATIC_DATA = {
-            "stick_code": "6889177",
-            "matches": [
-                {
-                    "id": 1,
-                    "type": "featured",
-                    "category": "Tennis | Roland-Garros",
-                    "title": "ROLAND GARROS",
-                    "badge_time": "05:11:58",
-                    "bg_gradient": "linear-gradient(135deg, #b91c1c 0%, #450a0a 100%)",
-                    "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-                },
-                {
-                    "id": 2,
-                    "type": "vs_card",
-                    "category": "CRICKET | ENGLAND VS NEW ZEALAND",
-                    "team1": "England",
-                    "team1_color": "#cf142b",
-                    "team2": "New Zealand",
-                    "team2_color": "#00247d",
-                    "badge_time": "04:11:58",
-                    "stream_url": "https://samples.tdtd.io/vlc.m3u8",
-                    "servers": [
-                        {"name": "W", "color": "#00f0ff"},
-                        {"name": "W", "color": "#ff007f"},
-                        {"name": "sky", "color": "#ff0000"},
-                        {"name": "FOX", "color": "#00247d"}
-                    ],
-                    "total_servers": 5
-                }
-            ],
-            "categories": [
-                {"name": "Sports", "icon": "fa-trophy", "color": "#00f0ff"},
-                {"name": "Bangla", "icon": "fa-circle-dot", "color": "#ff3b30"},
-                {"name": "Kolkata", "icon": "fa-gopuram", "color": "#ff9500"},
-                {"name": "India", "icon": "fa-flag", "color": "#34c759"},
-                {"name": "Pakistan", "icon": "fa-star", "color": "#af52de"},
-                {"name": "News", "icon": "fa-newspaper", "color": "#ffcc00"},
-                {"name": "Entertainment", "icon": "fa-masks-theater", "color": "#5ac8fa"},
-                {"name": "Movie", "icon": "fa-film", "color": "#ff2d55"},
-                {"name": "Kids", "icon": "fa-child", "color": "#ff9500"},
-                {"name": "Music", "icon": "fa-music", "color": "#4da6ff"}
-            ]
-        };
-
-        // ভিউ নেভিগেশন কন্ট্রোল
+        // ট্যাব নেভিগেশন কন্ট্রোল
         function navigate(panelId, targetNode) {
             document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
@@ -566,81 +499,96 @@
             targetNode.classList.add('active');
         }
 
-        // লাইভ স্ট্রিম প্লেয়ার ইঞ্জিন
-        function injectStream(url) {
-            const video = document.getElementById('live-video-element');
-            const playerBox = document.getElementById('global-player-container');
-            playerBox.classList.add('active');
+        // ম্যাচ কার্ড বা লিংকে ক্লিক করলে কী অ্যাকশন হবে তা এখান থেকে কন্ট্রোল করবি
+        function handleCardAction(channelUrl, channelId) {
+            console.log("Channel ID:", channelId);
+            console.log("Target Link:", channelUrl);
             
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() { video.play(); });
+            // তুই চাইলে সরাসরি লিংকে রিডাইরেক্ট করতে পারিস এভাবে:
+            if(channelUrl) {
+                window.location.href = channelUrl;
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ইন্টারফেস রেন্ডারিং লজিক
-        function initializeApp() {
-            // মার্কি নোটিশ সেটআপ
-            document.getElementById('ticker-space').textContent = `📢 stick code: ${STATIC_DATA.stick_code} .. Official website is "sportzxtv.com" .. Enjoy Live High Quality Streams!`;
+        // তোর json.data ফাইল থেকে ডাটা লোড করার কোর ইঞ্জিন
+        async function fetchAndRenderData() {
+            try {
+                // গিটহাবের রুট ফোল্ডারে থাকা json.data ফাইল কল করা হচ্ছে
+                const response = await fetch('json.data');
+                const data = await response.json();
 
-            // লাইভ ম্যাচ কার্ড রেন্ডার
-            const listTarget = document.getElementById('matches-list-target');
-            listTarget.innerHTML = '';
-
-            STATIC_DATA.matches.forEach(match => {
-                let cardMarkup = '';
-                if (match.type === 'featured') {
-                    cardMarkup = `
-                        <div class="match-card" onclick="injectStream('${match.stream_url}')">
-                            <div class="card-top"><span class="time-badge">${match.badge_time}</span><span class="live-text"><span class="pulse-dot"></span> Live</span></div>
-                            <div style="background: ${match.bg_gradient}; height: 110px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-                                <span style="font-weight: 800; font-size: 20px; letter-spacing: 1.5px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">${match.title}</span>
-                            </div>
-                            <span style="font-size: 12px; color: var(--text-muted); font-weight:500;">${match.category}</span>
-                        </div>`;
-                } else if (match.type === 'vs_card') {
-                    let serverBadges = match.servers.map(srv => `<div class="server-mini" style="color: ${srv.color}">${srv.name}</div>`).join('');
-                    cardMarkup = `
-                        <div class="match-card" onclick="injectStream('${match.stream_url}')">
-                            <div class="card-top"><span style="font-size:11px; font-weight:bold; color:#94a3b8;">${match.category}</span></div>
-                            <div class="team-container">
-                                <div class="team-info">
-                                    <div class="team-row"><div class="flag-icon" style="background:${match.team1_color}"></div> ${match.team1}</div>
-                                    <div class="team-row"><div class="flag-icon" style="background:${match.team2_color}"></div> ${match.team2}</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <span class="time-badge" style="display:inline-block; margin-bottom: 6px;">${match.badge_time}</span>
-                                    <span class="live-text"><span class="pulse-dot"></span> Live</span>
-                                </div>
-                            </div>
-                            <div class="card-bottom">
-                                <div class="badge-list">${serverBadges}<div class="server-mini" style="color:#fff">+1</div></div>
-                                <span style="font-size: 11px; color: var(--text-muted); font-weight:500;">${match.total_servers} Servers</span>
-                            </div>
-                        </div>`;
+                // ১. স্টিক কোড এবং নোটিশ রেন্ডার
+                if(data.stick_code) {
+                    document.getElementById('ticker-space').textContent = `📢 stick code: ${data.stick_code} .. Official website is "sportzxtv.com" .. Enjoy Live High Quality Streams!`;
                 }
-                listTarget.innerHTML += cardMarkup;
-            });
 
-            // ক্যাটাগরি গ্রিড রেন্ডার
-            const gridTarget = document.getElementById('categories-grid-target');
-            gridTarget.innerHTML = '';
-            STATIC_DATA.categories.forEach(cat => {
-                gridTarget.innerHTML += `
-                    <div class="grid-card">
-                        <div class="grid-circle"><i class="fa-solid ${cat.icon}" style="color: ${cat.color}"></i></div>
-                        <span>${cat.name}</span>
-                    </div>`;
-            });
+                // ২. লাইভ ম্যাচ কার্ড জেনারেটর লুপ
+                const listTarget = document.getElementById('matches-list-target');
+                listTarget.innerHTML = ''; // কন্টেইনার ক্লিয়ার করা হলো
+
+                if(data.matches && data.matches.length > 0) {
+                    data.matches.forEach(match => {
+                        let cardMarkup = '';
+                        // কাস্টম বা এক্সটার্নাল লিংক কি নামে আছে তা অবজেক্ট থেকে বের করা (url বা link বা stream_url)
+                        let targetLink = match.stream_url || match.link || match.url || '';
+                        
+                        if (match.type === 'featured') {
+                            cardMarkup = `
+                                <div class="match-card" onclick="handleCardAction('${targetLink}', '${match.id}')">
+                                    <div class="card-top"><span class="time-badge">${match.badge_time || 'LIVE'}</span><span class="live-text"><span class="pulse-dot"></span> Live</span></div>
+                                    <div style="background: ${match.bg_gradient || 'linear-gradient(135deg, #1e1e38, #0f0f1a)'}; height: 110px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                        <span style="font-weight: 800; font-size: 20px; letter-spacing: 1.5px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); text-transform: uppercase;">${match.title || match.name}</span>
+                                    </div>
+                                    <span style="font-size: 12px; color: var(--text-muted); font-weight:500;">${match.category || 'Sports Event'}</span>
+                                </div>`;
+                        } else if (match.type === 'vs_card') {
+                            let servers = match.servers || [];
+                            let serverBadges = servers.map(srv => `<div class="server-mini" style="color: ${srv.color || '#fff'}">${srv.name || 'W'}</div>`).join('');
+                            
+                            cardMarkup = `
+                                <div class="match-card" onclick="handleCardAction('${targetLink}', '${match.id}')">
+                                    <div class="card-top"><span style="font-size:11px; font-weight:bold; color:#94a3b8;">${match.category || 'SPORTS MATCH'}</span></div>
+                                    <div class="team-container">
+                                        <div class="team-info">
+                                            <div class="team-row"><div class="flag-icon" style="background:${match.team1_color || '#cf142b'}"></div> ${match.team1 || 'Team A'}</div>
+                                            <div class="team-row"><div class="flag-icon" style="background:${match.team2_color || '#00247d'}"></div> ${match.team2 || 'Team B'}</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="time-badge" style="display:inline-block; margin-bottom: 6px;">${match.badge_time || 'LIVE'}</span>
+                                            <span class="live-text"><span class="pulse-dot"></span> Live</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-bottom">
+                                        <div class="badge-list">${serverBadges}</div>
+                                        <span style="font-size: 11px; color: var(--text-muted); font-weight:500;">${match.total_servers || servers.length} Servers</span>
+                                    </div>
+                                </div>`;
+                        }
+                        listTarget.innerHTML += cardMarkup;
+                    });
+                }
+
+                // ৩. ক্যাটাগরি গ্রিড জেনারেটর লুপ
+                const gridTarget = document.getElementById('categories-grid-target');
+                gridTarget.innerHTML = '';
+                
+                if(data.categories && data.categories.length > 0) {
+                    data.categories.forEach(cat => {
+                        gridTarget.innerHTML += `
+                            <div class="grid-card">
+                                <div class="grid-circle"><i class="fa-solid ${cat.icon || 'fa-trophy'}" style="color: ${cat.color || '#00f0ff'}"></i></div>
+                                <span>${cat.name}</span>
+                            </div>`;
+                    });
+                }
+
+            } catch (err) {
+                console.error("json.data ফাইলটি লোড করা যায়নি অথবা ফাইলে ভুল আছে:", err);
+            }
         }
 
-        window.addEventListener('DOMContentLoaded', initializeApp);
+        // ডম রেডি হলে ডাটা ফেচিং রান হবে
+        window.addEventListener('DOMContentLoaded', fetchAndRenderData);
     </script>
 </body>
 </html>
