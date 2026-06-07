@@ -3,322 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportzX UI Clone</title>
+    <title>All Sports</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
-            --bg-dark: #07080e;
-            --bg-gradient: linear-gradient(180deg, #0f0c1b 0%, #07080e 100%);
-            --card-bg: #111424;
+            --bg-gradient: linear-gradient(180deg, #0e0a1a 0%, #06070d 100%);
+            --card-bg: #111425;
             --neon-cyan: #00f0ff;
             --neon-pink: #ff007f;
             --text-main: #ffffff;
-            --text-muted: #7e8a9b;
-            --border-color: #1b203a;
+            --text-muted: #7d899c;
+            --border-color: #1a1f38;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #000;
+            background: var(--bg-gradient);
             color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
 
-        /* Mobile Frame Emulator */
-        .phone-container {
+        /* Responsive Wrapper: Full width on mobile, centered block on desktop */
+        .app-container {
             width: 100%;
-            max-width: 420px;
-            height: 90vh;
-            min-height: 750px;
-            background: var(--bg-gradient);
+            max-width: 480px;
+            min-height: 100vh;
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 4px solid #1a1d29;
-            border-radius: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            background: #06070d;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
         }
 
-        /* Top Status Bar Mock */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 20px;
-            font-size: 11px;
-            color: #fff;
-            background: #0f0c1b;
-        }
-
-        /* Header */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 18px;
-            background: #0f0c1b;
+            padding: 16px 20px;
+            background: #0e0a1a;
+            position: sticky;
+            top: 0;
+            z-index: 110;
         }
 
         header .logo {
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(to right, #ffffff, #c2c7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         header .icons i {
             font-size: 18px;
             margin-left: 20px;
             cursor: pointer;
+            color: #fff;
         }
 
-        /* Ticker Banner */
-        .ticker-wrap {
-            background: rgba(0, 240, 255, 0.05);
-            padding: 8px 12px;
-            border-top: 1px solid rgba(0, 240, 255, 0.1);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+        /* Marquee Ticker Section */
+        .ticker-container {
+            background: rgba(0, 240, 255, 0.04);
+            padding: 8px 14px;
+            border-top: 1px solid rgba(0, 240, 255, 0.12);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.12);
             font-size: 12px;
             color: var(--neon-cyan);
-            display: flex;
-            align-items: center;
-            gap: 8px;
             overflow: hidden;
             white-space: nowrap;
         }
 
         .ticker-text {
             display: inline-block;
-            animation: marquee 15s linear infinite;
+            padding-left: 100%;
+            animation: marquee 20s linear infinite;
         }
 
         @keyframes marquee {
-            0% { transform: translate3d(100%, 0, 0); }
+            0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
-        /* Main Scrollable Content */
-        .content-area {
+        .main-content {
             flex: 1;
+            padding: 16px 16px 90px 16px;
             overflow-y: auto;
-            padding: 12px 15px 80px 15px;
         }
 
-        .content-area::-webkit-scrollbar {
+        .app-view { display: none; }
+        .app-view.active { display: block; }
+
+        /* Video Player Styling */
+        .video-box {
+            width: 100%;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
             display: none;
         }
+        .video-box.active { display: block; }
 
-        /* View Control */
-        .view-section {
-            display: none;
-        }
-
-        .view-section.active {
+        video {
+            width: 100%;
+            aspect-ratio: 16/9;
             display: block;
         }
 
-        /* Horizontal Sports List */
-        .sports-row {
+        /* Horizontal Sports Circular Tabs */
+        .sports-nav {
             display: flex;
             gap: 14px;
             overflow-x: auto;
-            padding: 5px 0 15px 0;
+            padding: 4px 2px 16px 2px;
         }
+        .sports-nav::-webkit-scrollbar { display: none; }
 
-        .sports-row::-webkit-scrollbar {
-            display: none;
-        }
-
-        .sport-circle {
+        .sport-tab {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 60px;
-            text-align: center;
+            min-width: 56px;
+            cursor: pointer;
         }
 
-        .icon-box {
-            width: 56px;
-            height: 56px;
+        .sport-circle {
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
-            background: #151226;
+            background: #141226;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 2px solid #25233c;
+            border: 2px solid #23223f;
             margin-bottom: 6px;
+            font-size: 18px;
         }
 
-        .sport-circle.active .icon-box {
+        .sport-tab.active .sport-circle {
             border: 2px solid var(--neon-cyan);
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
         }
+        .sport-tab span { font-size: 11px; color: #cbd5e1; }
 
-        /* Styled Filter Tabs */
-        .tabs-row {
+        /* Filter Row Badges */
+        .filter-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 16px;
+            overflow-x: auto;
         }
+        .filter-row::-webkit-scrollbar { display: none; }
 
-        .filter-tab {
+        .filter-btn {
             background: #111424;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 13px;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
+            white-space: nowrap;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .filter-tab.active {
+        .filter-btn.active {
             border: 1.5px solid var(--neon-cyan);
             color: #fff;
-            font-family: 'Georgia', cursive, sans-serif;
-            font-style: italic;
+            font-weight: bold;
         }
 
-        .filter-tab .dot {
+        .pulse-dot {
             width: 8px;
             height: 8px;
             background: var(--neon-pink);
             border-radius: 50%;
-            display: inline-block;
+            box-shadow: 0 0 8px var(--neon-pink);
         }
 
-        /* Neon UI Match Card */
+        /* Match Card & Overlay Layouts */
         .match-card {
             background: var(--card-bg);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
             border: 1px solid var(--border-color);
             position: relative;
-            box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.03);
+            cursor: pointer;
         }
 
         .match-card::after {
             content: '';
             position: absolute;
             inset: -1px;
-            border-radius: 14px;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(255, 0, 127, 0.3));
+            border-radius: 16px;
+            padding: 1.2px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(255, 0, 127, 0.2));
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
         }
 
-        .card-meta {
+        .card-top {
             display: flex;
             justify-content: space-between;
             font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
 
         .time-badge {
             background: var(--neon-pink);
-            color: white;
-            padding: 1px 6px;
-            border-radius: 4px;
+            color: #fff;
+            padding: 2px 7px;
+            border-radius: 5px;
             font-size: 10px;
+            font-weight: bold;
         }
 
-        .live-indicator {
+        .live-text {
             color: var(--neon-pink);
             display: flex;
             align-items: center;
             gap: 4px;
             font-size: 11px;
+            font-weight: bold;
         }
 
-        .live-indicator::before {
-            content: '●';
-            font-size: 9px;
-        }
-
-        .banner-img {
-            width: 100%;
-            height: 110px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-bottom: 5px;
-        }
-
-        .team-line {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 8px 0;
-            font-size: 15px;
-        }
-
-        .flag-circle {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #25283d;
-        }
-
-        .card-servers {
+        .team-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 12px;
         }
 
-        .server-logos {
+        .team-info { display: flex; flex-direction: column; gap: 10px; }
+        .team-row { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; }
+        .flag-icon { width: 22px; height: 22px; border-radius: 50%; }
+
+        .card-bottom {
             display: flex;
-            gap: 5px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
 
-        .mini-logo {
-            width: 24px;
-            height: 24px;
+        .badge-list { display: flex; gap: 6px; }
+        .server-mini {
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            background: #252a45;
+            background: #1c2038;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 9px;
             font-weight: bold;
-            border: 1px solid #3b4366;
+            border: 1px solid #353d66;
         }
 
-        /* Categories Grid */
-        .grid-title {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: var(--text-muted);
-        }
+        .view-title { font-size: 18px; font-weight: 600; color: #e2e8f0; margin-bottom: 15px; }
 
-        .app-grid {
+        /* Grid Categories Structure */
+        .grid-layout {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
 
-        .grid-item {
+        .grid-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 4px;
+            border-radius: 14px;
+            padding: 14px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -326,114 +302,105 @@
             cursor: pointer;
         }
 
-        .grid-icon-circle {
-            width: 44px;
-            height: 44px;
+        .grid-circle {
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            background: #1a1d36;
+            background: #191c32;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 8px;
-            border: 1px solid #2d345e;
+            border: 1px solid #2a3154;
+            font-size: 16px;
         }
 
-        .grid-item span {
+        .grid-card span {
             font-size: 11px;
             font-weight: 500;
+            color: #e2e8f0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
         }
 
-        /* Settings View Styles */
-        .settings-header {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .settings-logo {
-            width: 60px;
-            height: 60px;
-            background: #1a1d36;
-            border-radius: 15px;
-            margin: 0 auto 10px auto;
+        /* Settings View Layout */
+        .settings-top { text-align: center; padding: 15px 0; }
+        .app-avatar {
+            width: 64px;
+            height: 64px;
+            background: #181b33;
+            border-radius: 16px;
+            margin: 0 auto 12px auto;
             display: flex;
             justify-content: center;
             align-items: center;
             border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0,240,255,0.2);
         }
 
-        .social-row {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .social-btn {
-            width: 40px;
-            height: 40px;
+        .social-box { display: flex; justify-content: center; gap: 16px; margin: 16px 0; }
+        .social-circle {
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 16px;
+            font-size: 18px;
             background: #111424;
             border: 1px solid var(--border-color);
+            cursor: pointer;
         }
 
-        .setting-group-title {
+        .group-label {
             font-size: 11px;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin: 15px 0 8px 0;
-            letter-spacing: 0.5px;
+            margin: 20px 0 8px 0;
+            letter-spacing: 0.6px;
         }
 
-        .setting-item {
+        .option-tile {
             background: var(--card-bg);
-            padding: 12px 15px;
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.02);
             font-size: 14px;
         }
+        .option-tile:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .option-tile:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-bottom: none; }
 
-        .setting-item:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
-        .setting-item:last-child { border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; border-bottom: none; }
+        .tile-left { display: flex; align-items: center; gap: 14px; }
+        .tile-left i { width: 16px; text-align: center; color: #a5b4fc; }
 
-        .setting-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Custom Switch */
-        .switch {
-            width: 36px;
-            height: 20px;
-            background: #2d345e;
-            border-radius: 10px;
+        .toggle-switch {
+            width: 38px;
+            height: 22px;
+            background: #2e355e;
+            border-radius: 12px;
             position: relative;
             cursor: pointer;
         }
-        .switch::before {
+        .toggle-switch::after {
             content: '';
             position: absolute;
             width: 16px;
             height: 16px;
-            background: white;
+            background: #fff;
             border-radius: 50%;
-            top: 2px;
-            left: 2px;
+            top: 3px;
+            left: 3px;
             transition: 0.2s;
         }
+        .toggle-switch.on { background: var(--neon-cyan); }
+        .toggle-switch.on::after { left: 19px; }
 
         /* Bottom Fixed Navigation Bar */
-        .bottom-nav {
+        .navbar-bottom {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -442,253 +409,238 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-radius: 18px 18px 0 0;
-            z-index: 99;
+            padding: 12px 0;
+            border-radius: 20px 20px 0 0;
+            z-index: 100;
         }
 
-        .nav-btn {
+        .nav-link {
             display: flex;
             flex-direction: column;
             align-items: center;
             color: var(--text-muted);
             font-size: 11px;
             cursor: pointer;
-            gap: 4px;
-            width: 70px;
+            gap: 5px;
+            width: 75px;
+            text-decoration: none;
         }
-
-        .nav-btn i {
-            font-size: 18px;
-        }
-
-        .nav-btn.active {
-            color: var(--neon-cyan);
-        }
-
-        .nav-btn.live-btn {
-            color: var(--text-muted);
-        }
-        .nav-btn.live-btn.active {
-            color: #00f0ff;
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: 20px;
-            padding: 2px 0;
-        }
+        .nav-link i { font-size: 19px; }
+        .nav-link.active { color: var(--neon-cyan); }
     </style>
 </head>
 <body>
 
-    <div class="phone-container">
-        <div class="status-bar">
-            <span>8:12</span>
-            <span>4G 📶 [26]</span>
-        </div>
-
+    <div class="app-container">
         <header>
-            <div class="logo">SportzX</div>
+            <div class="logo">All Sports</div>
             <div class="icons">
-                <i class="fa-solid fa-rotate-right"></i>
+                <i class="fa-solid fa-rotate-right" onclick="location.reload();"></i>
                 <i class="fa-solid fa-heart"></i>
                 <i class="fa-solid fa-magnifying-glass"></i>
             </div>
         </header>
 
-        <div class="ticker-wrap">
-            <div class="ticker-text">
-                📢 stick code: 6889177 .. Official website is "sportzxtv.com" .. Enjoy Live High Quality Streams!
-            </div>
+        <div class="ticker-container">
+            <div class="ticker-text" id="ticker-space">📢 Loading data updates...</div>
         </div>
 
-        <div class="content-area">
-
-            <div id="view-live" class="view-section active">
-                <div class="sports-row">
-                    <div class="sport-circle active">
-                        <div class="icon-box"><i class="fa-solid fa-border-all" style="color: #a58aff;"></i></div>
-                        <span style="font-size: 10px;">All</span>
-                    </div>
-                    <div class="sport-circle">
-                        <div class="icon-box"><i class="fa-solid fa-baseball-bat-ball" style="color: #4da6ff;"></i></div>
-                        <span style="font-size: 10px;">Cricket</span>
-                    </div>
-                    <div class="sport-circle">
-                        <div class="icon-box"><i class="fa-solid fa-w" style="color: #ff4d4d;"></i></div>
-                        <span style="font-size: 10px;">WWE</span>
-                    </div>
-                    <div class="sport-circle">
-                        <div class="icon-box"><i class="fa-solid fa-flag-checkered" style="color: #ffcc00;"></i></div>
-                        <span style="font-size: 10px;">F1</span>
-                    </div>
-                    <div class="sport-circle">
-                        <div class="icon-box"><i class="fa-solid fa-table-tennis-pools" style="color: #33cc66;"></i></div>
-                        <span style="font-size: 10px;">Tennis</span>
-                    </div>
-                </div>
-
-                <div class="tabs-row">
-                    <div class="filter-tab active">✓ All (33)</div>
-                    <div class="filter-tab"><span class="dot"></span> Live now (4)</div>
-                    <div class="filter-tab"><i class="fa-regular fa-calendar"></i> Today's (14)</div>
-                </div>
-
-                <div class="match-card">
-                    <div class="card-meta">
-                        <span class="time-badge">05:11:58</span>
-                        <span class="live-indicator">Live</span>
-                    </div>
-                    <div style="background: linear-gradient(45deg, #c33724, #6b180d); height: 100px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: bold; font-size: 18px; letter-spacing: 1px;">ROLAND GARROS</span>
-                    </div>
-                    <span style="font-size: 12px; color: var(--text-muted);">Tennis | Roland-Garros</span>
-                </div>
-
-                <div class="match-card">
-                    <div class="card-meta">
-                        <span>CRICKET | ENGLAND VS NEW ZEALAND</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div>
-                            <div class="team-line"><div class="flag-circle" style="background: #cf142b;"></div> England</div>
-                            <div class="team-line"><div class="flag-circle" style="background: #00247d;"></div> New Zealand</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span class="time-badge" style="display: block; margin-bottom: 5px;">04:11:58</span>
-                            <span class="live-indicator">Live</span>
-                        </div>
-                    </div>
-                    <div class="card-servers">
-                        <div class="server-logos">
-                            <div class="mini-logo" style="color:#00f0ff">W</div>
-                            <div class="mini-logo" style="color:#ff007f">W</div>
-                            <div class="mini-logo" style="background:red; font-size:7px">sky</div>
-                            <div class="mini-logo" style="background:#00247d; font-size:7px">FOX</div>
-                            <div class="mini-logo">+1</div>
-                        </div>
-                        <span style="font-size: 11px; color: var(--text-muted);">5 Servers</span>
-                    </div>
-                </div>
+        <div class="main-content">
+            <div class="video-box" id="global-player-container">
+                <video id="live-video-element" controls autoplay playsinline></video>
             </div>
 
-
-            <div id="view-categories" class="view-section">
-                <div class="grid-title">Categories</div>
-                <div class="app-grid">
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-trophy" style="color: #00f0ff;"></i></div>
-                        <span>Sports</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-circle-dot" style="color: #ff3b30;"></i></div>
-                        <span>Bangla</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-gopuram" style="color: #ff9500;"></i></div>
-                        <span>Kolkata</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-flag" style="color: #34c759;"></i></div>
-                        <span>India</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-star" style="color: #af52de;"></i></div>
-                        <span>Pakistan</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-newspaper" style="color: #ffcc00;"></i></div>
-                        <span>News</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-masks-theater" style="color: #5ac8fa;"></i></div>
-                        <span>Entertainment</span>
-                    </div>
-                    <div class="grid-item">
-                        <div class="grid-icon-circle"><i class="fa-solid fa-film" style="color: #ff2d55;"></i></div>
-                        <span>Movie</span>
-                    </div>
+            <div id="panel-live" class="app-view active">
+                <div class="sports-nav">
+                    <div class="sport-tab active"><div class="sport-circle"><i class="fa-solid fa-globe" style="color: #a58aff;"></i></div><span>All</span></div>
+                    <div class="sport-tab"><div class="sport-circle"><i class="fa-solid fa-baseball-bat-ball" style="color: #4da6ff;"></i></div><span>Cricket</span></div>
+                    <div class="sport-tab"><div class="sport-circle"><i class="fa-solid fa-w" style="color: #ff4d4d;"></i></div><span>WWE</span></div>
+                    <div class="sport-tab"><div class="sport-circle"><i class="fa-solid fa-flag-checkered" style="color: #ffcc00;"></i></div><span>F1</span></div>
+                    <div class="sport-tab"><div class="sport-circle"><i class="fa-solid fa-table-tennis-pools" style="color: #33cc66;"></i></div><span>Tennis</span></div>
                 </div>
+
+                <div class="filter-row">
+                    <div class="filter-btn active">✓ All (33)</div>
+                    <div class="filter-btn"><span class="pulse-dot"></span> Live now (4)</div>
+                    <div class="filter-btn"><i class="fa-regular fa-calendar"></i> Today's (14)</div>
+                </div>
+
+                <div id="matches-list-target"></div>
             </div>
 
+            <div id="panel-categories" class="app-view">
+                <div class="view-title">Categories</div>
+                <div class="grid-layout" id="categories-grid-target"></div>
+            </div>
 
-            <div id="view-settings" class="view-section">
-                <div class="settings-header">
-                    <div class="settings-logo">
-                        <i class="fa-solid fa-play" style="font-size: 24px; color: var(--neon-cyan);"></i>
-                    </div>
-                    <h3>SportzX</h3>
+            <div id="panel-settings" class="app-view">
+                <div class="settings-top">
+                    <div class="app-avatar"><i class="fa-solid fa-play" style="font-size: 26px; color: var(--neon-cyan);"></i></div>
+                    <h3 style="font-size: 18px; font-weight: 600;">All Sports</h3>
                     <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Version 2.5 (Stable)</p>
                     
-                    <div class="social-row">
-                        <div class="social-btn" style="color: #24A1DE;"><i class="fa-brands fa-telegram"></i></div>
-                        <div class="social-btn" style="color: #1877F2;"><i class="fa-brands fa-facebook"></i></div>
-                        <div class="social-btn" style="color: #1DA1F2;"><i class="fa-brands fa-twitter"></i></div>
-                        <div class="social-btn" style="color: #E1306C;"><i class="fa-brands fa-instagram"></i></div>
+                    <div class="social-box">
+                        <div class="social-circle" style="color: #24A1DE;"><i class="fa-brands fa-telegram"></i></div>
+                        <div class="social-circle" style="color: #1877F2;"><i class="fa-brands fa-facebook"></i></div>
+                        <div class="social-circle" style="color: #1DA1F2;"><i class="fa-brands fa-twitter"></i></div>
+                        <div class="social-circle" style="color: #E1306C;"><i class="fa-brands fa-instagram"></i></div>
                     </div>
                 </div>
 
-                <div class="setting-group-title">Playback Features</div>
+                <div class="group-label">Playback Features</div>
                 <div>
-                    <div class="setting-item">
-                        <div class="setting-left"><i class="fa-solid fa-tower-broadcast"></i> Network Stream</div>
-                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-left"><i class="fa-solid fa-list-ul"></i> Playlists</div>
-                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-left"><i class="fa-solid fa-window-restore"></i> Floating Player</div>
-                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-left">
-                            <i class="fa-solid fa-gear"></i> 
-                            <div>
-                                <div>Force Low Quality</div>
-                                <div style="font-size: 10px; color: var(--text-muted);">Forces lowest resolution on mobile data</div>
-                            </div>
+                    <div class="option-tile"><div class="tile-left"><i class="fa-solid fa-tower-broadcast"></i> Network Stream</div><i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i></div>
+                    <div class="option-tile"><div class="tile-left"><i class="fa-solid fa-list-ul"></i> Playlists</div><i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i></div>
+                    <div class="option-tile"><div class="tile-left"><i class="fa-solid fa-window-restore"></i> Floating Player</div><i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i></div>
+                    <div class="option-tile">
+                        <div class="tile-left">
+                            <i class="fa-solid fa-gear"></i>
+                            <div><div>Force Low Quality</div><div style="font-size: 11px; color: var(--text-muted);">Forces lowest resolution on mobile data</div></div>
                         </div>
-                        <div class="switch"></div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-btn" onclick="switchTab('view-live', this)">
-                <i class="fa-solid fa-tv"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('view-categories', this)">
-                <i class="fa-solid fa-grip"></i>
-                <span>Categories</span>
-            </div>
-            <div class="nav-btn active live-btn" onclick="switchTab('view-live', this)">
-                <i class="fa-solid fa-tower-broadcast"></i>
-                <span>Live Events</span>
-            </div>
-            <div class="nav-btn" onclick="switchTab('view-settings', this)">
-                <i class="fa-solid fa-gears"></i>
-                <span>Settings</span>
-            </div>
+        <nav class="navbar-bottom">
+            <div class="nav-link active" onclick="navigate('panel-live', this)"><i class="fa-solid fa-tv"></i><span>Home</span></div>
+            <div class="nav-link" onclick="navigate('panel-categories', this)"><i class="fa-solid fa-grip"></i><span>Categories</span></div>
+            <div class="nav-link" onclick="navigate('panel-live', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Live Events</span></div>
+            <div class="nav-link" onclick="navigate('panel-settings', this)"><i class="fa-solid fa-gears"></i><span>Settings</span></div>
         </nav>
     </div>
 
     <script>
-        function switchTab(viewId, element) {
-            // Hide all views
-            const views = document.querySelectorAll('.view-section');
-            views.forEach(view => view.classList.remove('active'));
-            
-            // Show selected view
-            document.getElementById(viewId).classList.add('active');
-            
-            // Handle Nav active class
-            const navButtons = document.querySelectorAll('.nav-btn');
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+        // ডাইনামিক ইন্টারনাল ডাটাবেস (গিটহাব পেজেস-এর জন্য একদম রেডি)
+        const STATIC_DATA = {
+            "stick_code": "6889177",
+            "matches": [
+                {
+                    "id": 1,
+                    "type": "featured",
+                    "category": "Tennis | Roland-Garros",
+                    "title": "ROLAND GARROS",
+                    "badge_time": "05:11:58",
+                    "bg_gradient": "linear-gradient(135deg, #b91c1c 0%, #450a0a 100%)",
+                    "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+                },
+                {
+                    "id": 2,
+                    "type": "vs_card",
+                    "category": "CRICKET | ENGLAND VS NEW ZEALAND",
+                    "team1": "England",
+                    "team1_color": "#cf142b",
+                    "team2": "New Zealand",
+                    "team2_color": "#00247d",
+                    "badge_time": "04:11:58",
+                    "stream_url": "https://samples.tdtd.io/vlc.m3u8",
+                    "servers": [
+                        {"name": "W", "color": "#00f0ff"},
+                        {"name": "W", "color": "#ff007f"},
+                        {"name": "sky", "color": "#ff0000"},
+                        {"name": "FOX", "color": "#00247d"}
+                    ],
+                    "total_servers": 5
+                }
+            ],
+            "categories": [
+                {"name": "Sports", "icon": "fa-trophy", "color": "#00f0ff"},
+                {"name": "Bangla", "icon": "fa-circle-dot", "color": "#ff3b30"},
+                {"name": "Kolkata", "icon": "fa-gopuram", "color": "#ff9500"},
+                {"name": "India", "icon": "fa-flag", "color": "#34c759"},
+                {"name": "Pakistan", "icon": "fa-star", "color": "#af52de"},
+                {"name": "News", "icon": "fa-newspaper", "color": "#ffcc00"},
+                {"name": "Entertainment", "icon": "fa-masks-theater", "color": "#5ac8fa"},
+                {"name": "Movie", "icon": "fa-film", "color": "#ff2d55"},
+                {"name": "Kids", "icon": "fa-child", "color": "#ff9500"},
+                {"name": "Music", "icon": "fa-music", "color": "#4da6ff"}
+            ]
+        };
+
+        // ভিউ নেভিগেশন কন্ট্রোল
+        function navigate(panelId, targetNode) {
+            document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            targetNode.classList.add('active');
         }
+
+        // লাইভ স্ট্রিম প্লেয়ার ইঞ্জিন
+        function injectStream(url) {
+            const video = document.getElementById('live-video-element');
+            const playerBox = document.getElementById('global-player-container');
+            playerBox.classList.add('active');
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() { video.play(); });
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ইন্টারফেস রেন্ডারিং লজিক
+        function initializeApp() {
+            // মার্কি নোটিশ সেটআপ
+            document.getElementById('ticker-space').textContent = `📢 stick code: ${STATIC_DATA.stick_code} .. Official website is "sportzxtv.com" .. Enjoy Live High Quality Streams!`;
+
+            // লাইভ ম্যাচ কার্ড রেন্ডার
+            const listTarget = document.getElementById('matches-list-target');
+            listTarget.innerHTML = '';
+
+            STATIC_DATA.matches.forEach(match => {
+                let cardMarkup = '';
+                if (match.type === 'featured') {
+                    cardMarkup = `
+                        <div class="match-card" onclick="injectStream('${match.stream_url}')">
+                            <div class="card-top"><span class="time-badge">${match.badge_time}</span><span class="live-text"><span class="pulse-dot"></span> Live</span></div>
+                            <div style="background: ${match.bg_gradient}; height: 110px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                <span style="font-weight: 800; font-size: 20px; letter-spacing: 1.5px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">${match.title}</span>
+                            </div>
+                            <span style="font-size: 12px; color: var(--text-muted); font-weight:500;">${match.category}</span>
+                        </div>`;
+                } else if (match.type === 'vs_card') {
+                    let serverBadges = match.servers.map(srv => `<div class="server-mini" style="color: ${srv.color}">${srv.name}</div>`).join('');
+                    cardMarkup = `
+                        <div class="match-card" onclick="injectStream('${match.stream_url}')">
+                            <div class="card-top"><span style="font-size:11px; font-weight:bold; color:#94a3b8;">${match.category}</span></div>
+                            <div class="team-container">
+                                <div class="team-info">
+                                    <div class="team-row"><div class="flag-icon" style="background:${match.team1_color}"></div> ${match.team1}</div>
+                                    <div class="team-row"><div class="flag-icon" style="background:${match.team2_color}"></div> ${match.team2}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span class="time-badge" style="display:inline-block; margin-bottom: 6px;">${match.badge_time}</span>
+                                    <span class="live-text"><span class="pulse-dot"></span> Live</span>
+                                </div>
+                            </div>
+                            <div class="card-bottom">
+                                <div class="badge-list">${serverBadges}<div class="server-mini" style="color:#fff">+1</div></div>
+                                <span style="font-size: 11px; color: var(--text-muted); font-weight:500;">${match.total_servers} Servers</span>
+                            </div>
+                        </div>`;
+                }
+                listTarget.innerHTML += cardMarkup;
+            });
+
+            // ক্যাটাগরি গ্রিড রেন্ডার
+            const gridTarget = document.getElementById('categories-grid-target');
+            gridTarget.innerHTML = '';
+            STATIC_DATA.categories.forEach(cat => {
+                gridTarget.innerHTML += `
+                    <div class="grid-card">
+                        <div class="grid-circle"><i class="fa-solid ${cat.icon}" style="color: ${cat.color}"></i></div>
+                        <span>${cat.name}</span>
+                    </div>`;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
