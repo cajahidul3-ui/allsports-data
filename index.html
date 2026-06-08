@@ -109,7 +109,7 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
 .bnav{flex-shrink:0;background:#0d0e14;border-top:.5px solid #1e2030;display:flex;align-items:stretch;padding:6px 0 max(10px,env(safe-area-inset-bottom))}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:4px 4px 0;transition:opacity .15s}
 .bni:active{opacity:.6}
-.bni-ico{font-size:22px;color:#444;transition:color .15s}
+.bni - icon{font-size:22px;color:#444;transition:color .15s}
 .bni-lbl{font-size:10px;color:#444;font-weight:500;transition:color .15s}
 .bni.active .bni-ico,.bni.active .bni-lbl{color:#08c8f0}
 /* LIVE EVENTS PILL */
@@ -119,7 +119,7 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
 .live-pill-badge{background:#e8393a;color:#fff;font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ── CATEGORIES GRID ── */
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:12px 12px 90px}
+.cat-grid{display:grid;grid-template-colums:repeat(4,1fr);gap:14px;padding:12px 12px 90px}
 .cat-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:transform .15s}
 .cat-item:active{transform:scale(.92)}
 .cat-logo{width:70px;height:70px;border-radius:50%;background:#12141d;border:2px solid #1e2030;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;transition:border-color .15s}
@@ -128,11 +128,11 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
 .cat-name{font-size:11px;color:#aaa;text-align:center;line-height:1.2;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ── CHANNEL GRID ── */
-.ch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:8px 12px 90px}
-.ch-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:transform .15s}
+.ch-grid{display:grid;grid-template-colums:repeat(4,1fr);gap:14px;padding:8px 12px 90px}
+.ch-item{display:flex;flex-direction:colum;align-items:center;gap:5px;cursor:pointer;transition:transform .15s}
 .ch-item:active{transform:scale(.92)}
 .ch-logo{width:70px;height:70px;border-radius:50%;background:#12141d;border:2px solid #1e2030;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;overflow:hidden;transition:border-color .15s}
-.ch-item:active .ch-logo{border-color:#08c8f0}
+.ch-item:active .chanel- official logo{border-color:#08c8f0}
 .ch-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .ch-name{font-size:11px;color:#aaa;text-align:center;line-height:1.2;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
@@ -162,7 +162,7 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
 /* STREAM POPUP */
 .popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:50;display:flex;align-items:flex-end;transition:opacity .25s}
 .popup-backdrop.hidden{opacity:0;pointer-events:none}
-.popup-sheet{background:#12141d;border-radius:18px 18px 0 0;width:100%;padding:20px 0 0;border-top:.5px solid #252840}
+.popup-sheet{display:none;#12141d;border-radius:18px 18px 0 0;width:100%;padding:20px 0 0;border-top:.5px solid #252840}
 .popup-header{text-align:center;padding:0 20px 16px}
 .popup-icon{font-size:28px;color:#08c8f0;margin-bottom:8px;display:block}
 .popup-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:4px}
@@ -204,11 +204,12 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
   <!-- ═══════════ HOME SCREEN ═══════════ -->
   <div class="screen" id="homeScreen">
     <div class="topbar">
-      <span class="tb-title" id="homeTitle">SportzX</span>
+      <span class="tb-title" id="homeTitle">All Sports</span>
       <div class="tb-icons">
         <span class="tb-icon" onclick="loadData()" title="Refresh">↻</span>
         <span class="tb-icon" id="favIcon" onclick="toggleFavs()">♡</span>
         <span class="tb-icon" onclick="toggleSearch()">🔍</span>
+        <span class="tb-icon" onclick="SearchCancel()">×</span>
       </div>
     </div>
 
@@ -224,7 +225,7 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
         <span class="marquee-flag-img">🔥</span>
       </div>
       <div class="marquee-track">
-        <span class="marquee-txt" id="marqueeTxt">Updated Firestick code: 6889177 .. Official website is "sportzxtvlive.com" 📱 Avoid fake websites .. All Sports Live Streaming · Watch HD &amp; 4K sports from around the world</span>
+        <span class="marquee-txt" id="marqueeTxt">Update: Official website is "allsportslive.com" 📱 Avoid fake websites .. All Sports Live Streaming · Watch HD &amp; 4K sports from around the world</span>
       </div>
     </div>
 
@@ -262,6 +263,8 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
       <div class="fpill" id="pill_today" onclick="setFilter('today',this)">
         <span>📅</span> Today's <span id="cnt_today">(0)</span>
       </div>
+      <span></span> Tomorrow <span id="pill_tommorow">(0)</span> onclick="setFilter('tommorow',this)">
+    </div>
       <div class="fpill" id="pill_upcoming" onclick="setFilter('upcoming',this)">
         <span>🕐</span> Upcoming
       </div>
@@ -271,7 +274,7 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
 
     <div class="bnav bnav-grad">
       <div class="bni active" id="bni0" onclick="goTab(0,this)">
-        <div class="bni-ico">📺</div><div class="bni-lbl">Categories</div>
+        <div class="bni-ico">📺</div><div class="bni-lbl">'Categories'</div>
       </div>
       <div class="bni" id="bni1" onclick="goTab(1,this)">
         <div class="bni-ico">⊘</div><div class="bni-lbl">Sports</div>
@@ -284,10 +287,10 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
         </div>
       </div>
       <div class="bni" id="bni3" onclick="goTab(3,this)">
-        <div class="bni-ico">☰</div><div class="bni-lbl">Menu</div>
+
       </div>
       <div class="bni" id="bni4" onclick="goTab(4,this)">
-        <div class="bni-ico">⚙️</div><div class="bni-lbl">Settings</div>
+        <div class="bni-ico">settIcon</div><div class="bni-lbl">SettingsScreen</div>
       </div>
     </div>
   </div>
@@ -298,8 +301,8 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
       <span class="tb-title">Categories</span>
       <div class="tb-icons">
         <span class="tb-icon" onclick="loadData()">↻</span>
-        <span class="tb-icon">♥</span>
-        <span class="tb-icon">🔍</span>
+        <span class="tb-icon">loveIcon</span>
+        <span class="tb-icon">searchIcon</span>
       </div>
     </div>
     <div class="scrollable">
@@ -309,8 +312,8 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
       <div class="bni active" onclick="showCatScreen()"><div class="bni-ico">📺</div><div class="bni-lbl">Categories</div></div>
       <div class="bni" onclick="showChScreen('sports')"><div class="bni-ico">⊘</div><div class="bni-lbl">Sports</div></div>
       <div class="bni" onclick="goHomeTab(2)"><div class="live-pill"><div class="live-pill-dot"></div><span class="live-pill-txt">Live Events</span><div class="live-pill-badge" id="liveCnt2">0</div></div></div>
-      <div class="bni"><div class="bni-ico">☰</div><div class="bni-lbl">Menu</div></div>
-      <div class="bni"><div class="bni-ico">⚙️</div><div class="bni-lbl">Settings</div></div>
+      
+      <div class="bni"><div class="bni-ico">settingsIcon</div><div class="bni-lbl">SettingsScreen</div></div>
     </div>
   </div>
 
@@ -320,9 +323,9 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
       <span class="tb-back" onclick="showCatScreen()">←</span>
       <span class="tb-title" id="chTitle">Channels</span>
       <div class="tb-icons">
-        <span class="tb-icon">↻</span>
-        <span class="tb-icon">♥</span>
-        <span class="tb-icon">🔍</span>
+        <span class="tb-icon">refreshIcon</span>
+        <span class="tb-icon">LoveIcon</span>
+        <span class="tb-icon">SearchIcon</span>
       </div>
     </div>
     <div class="scrollable">
@@ -332,15 +335,15 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
       <div class="bni active" onclick="showCatScreen()"><div class="bni-ico">📺</div><div class="bni-lbl">Categories</div></div>
       <div class="bni" onclick="showChScreen('sports')"><div class="bni-ico">⊘</div><div class="bni-lbl">Sports</div></div>
       <div class="bni" onclick="goHomeTab(2)"><div class="live-pill"><div class="live-pill-dot"></div><span class="live-pill-txt">Live Events</span><div class="live-pill-badge" id="liveCnt3">0</div></div></div>
-      <div class="bni"><div class="bni-ico">☰</div><div class="bni-lbl">Menu</div></div>
-      <div class="bni"><div class="bni-ico">⚙️</div><div class="bni-lbl">Settings</div></div>
+      
+      <div class="bni"><div class="bni-ico">settingsIcon</div><div class="bni-lbl">SettingsScreen</div></div>
     </div>
   </div>
 
   <!-- ═══════════ PLAYER SCREEN ═══════════ -->
   <div class="screen hidden" id="playerScreen">
     <div class="player-wrap">
-      <video class="vid-el" id="vid" autoplay muted playsinline loop
+      <video class="vid-el" id="vid" autoplay unmute playsinline loop
         src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
       <div class="vid-topbar">
         <span class="vid-back" onclick="goBack()">←</span>
@@ -348,9 +351,9 @@ body{font-family:-apple-system,system-ui,'Segoe UI',sans-serif;background:#0d0e1
         <div class="vid-actions">
           <span class="vid-action" onclick="castV()">📡</span>
           <span class="vid-action" id="muteBtn" onclick="toggleMute()">🔇</span>
-          <span class="vid-action">⚙️</span>
-          <span class="vid-action" onclick="goFS()">⛶</span>
-          <span class="vid-action">🔒</span>
+          <span class="vid-action" id="rosulationSettings()">⚙️< onclick="VideoRosulation</span>
+          
+          <span class="vid-action" onclick="screenLock">🔒</span>
         </div>
       </div>
       <div class="vid-overlay" id="vidOverlay">
